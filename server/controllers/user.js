@@ -1,10 +1,9 @@
-
-
 const User = require("../models/user");
+const fs = require('fs');
 
+// Get user profile
 const getProfile = async (req, res) => {
     try {
-
         const user = await User.findById(req.user.userId, { 'profile': 1 });
 
         if (!user) {
@@ -13,16 +12,16 @@ const getProfile = async (req, res) => {
 
         res.status(200).json({ user });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Internal Server Error' })
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
-// Update user profile
-
+// Update user profile including profile picture upload
 const updateProfile = async (req, res) => {
     try {
         const { firstName, lastName, education, bio, subjects, location } = req.body;
+        const { profilePicture } = req.files; // Assuming the profile picture is uploaded as 'profilePicture'
 
         const user = await User.findById(req.user.userId);
 
@@ -31,7 +30,6 @@ const updateProfile = async (req, res) => {
         }
 
         // Updating the user profile
-        // Update profile fields
         user.profile.firstName = firstName || user.profile.firstName;
         user.profile.lastName = lastName || user.profile.lastName;
         user.profile.education = education || user.profile.education;
@@ -39,19 +37,19 @@ const updateProfile = async (req, res) => {
         user.profile.subjects = subjects || user.profile.subjects;
         user.profile.location = location || user.profile.location;
 
+        // Update profile picture if provided
+        if (profilePicture) {
+            user.profile.profilePicture.data = fs.readFileSync(profilePicture.path);
+            user.profile.profilePicture.contentType = profilePicture.mimetype;
+        }
 
         await user.save();
 
+        res.status(200).json({ message: 'User profile updated successfully' });
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Internal Server Error' })
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
-
-
-
-
-
 module.exports = { getProfile, updateProfile };
-

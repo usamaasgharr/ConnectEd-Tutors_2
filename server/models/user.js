@@ -3,6 +3,12 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
+    isActive: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
+
     username: {
         type: String,
         required: true
@@ -31,6 +37,7 @@ const userSchema = new mongoose.Schema({
             country: { type: String },
             city: { type: String }
         },
+        profilePicture: String
     },
     createdAt: {
         type: Date,
