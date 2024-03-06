@@ -2,11 +2,14 @@ const express = require('express');
 const authRoutes = require("./auth")
 const userRoutes = require('./user');
 const indexRoutes  = require('../controllers/index')
+const adminRoutes = require("./admin");
 
 
 const router = express.Router();
 
 
+
+router.use('/admin', adminRoutes);
 
 router.use('/api', authRoutes);         // login signup
 

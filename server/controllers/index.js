@@ -6,7 +6,7 @@ const User = require("../models/user");
 const getUserProfile = async (req, res) => {
     try {
 
-        const users = await User.find({ isActive: true });
+        const users = await User.find({ isActive: true }, 'profile username role');
         if (!users) {
             return res.status(404).json({ message: 'No users in DB' });
         }
