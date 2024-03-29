@@ -102,30 +102,34 @@ const signup = async (req, res) => {
 // ---------------------------------------login function------------------------------
 
 const login = async (req, res) => {
-
     try {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            // return res.status(400).json({ errors: errors.errors[0].msg });
+            return res.render('sign-in', { errorMessage: errors.errors[0].msg });
+
         }
 
         
         const { email, password } = req.body;
-
         const user = await User.findOne({ email });
+        
         if (!user) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            // return res.status(401).json({ message: 'Invalid credentials' });
+            return res.render('sign-in', {errorMessage: "Invalid Crediantials "});
         }
 
         
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid credientials' });
+        
+        if (!isPasswordValid ) {
+            return res.render('sign-in', { errorMessage: 'Invalid username or password' });
         }
         const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, 'your-secret-key', { expiresIn: '12000hr' });
 
         console.log(token)
-        res.status(200).json({ token });
+        res.cookie('token', token, { httpOnly: true });
+        res.redirect('/dashboard');
 
 
     } catch (error) {

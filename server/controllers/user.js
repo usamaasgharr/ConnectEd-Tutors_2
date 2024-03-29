@@ -52,4 +52,27 @@ const updateProfile = async (req, res) => {
     }
 };
 
-module.exports = { getProfile, updateProfile };
+
+
+// render user profile
+const renderUserProfilePage = async (req, res, next) => {
+
+    const username = req.params.username;
+    
+
+    try {
+        const user = await User.findOne({username: username});
+        
+        if (!user) {
+            return res.status(404).send('User not found');
+        }
+
+        // Render the user profile page with the retrieved user data
+        res.render('instructor-details', { user });
+    } catch (err) {
+        console.error('Error fetching user data:', err);
+        res.status(500).send('Internal server error');
+    }
+};
+
+module.exports = { getProfile, updateProfile , renderUserProfilePage};

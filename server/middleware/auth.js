@@ -4,11 +4,11 @@ const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
   // Get the token from the request headers
-  const token = req.headers.authorization;
+  const token = req.cookies.token;
 
   if (!token) {
-    return res.status(401).json({ message: 'Unauthorized - Missing token' });
-  }
+    return res.redirect('/login');
+}
 
   try {
     // Verify and decode the token
@@ -20,8 +20,8 @@ const authMiddleware = (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error(error);
-    return res.status(401).json({ message: 'Unauthorized - Invalid token' });
+    console.error('Error verifying token:', err);
+    res.redirect('/login');
   }
 };
 
