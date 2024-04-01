@@ -2,8 +2,6 @@ const jwt = require('jsonwebtoken');
 const adminSchema = require('../models/admin');
 
 const adminMiddleware = async (req, res, next) => {
-  
-
 
   const token = req.headers.authorization;
 

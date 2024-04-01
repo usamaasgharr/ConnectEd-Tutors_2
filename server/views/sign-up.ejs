@@ -54,7 +54,7 @@
                                         <p class="lead mb-4">Nice to see you! Please Sign up with your account.</p>
 
                                         <!-- Form START -->
-                                        <form>
+                                        <form action="/signup" method="POST" enctype="multipart/form-data">
                                             <!-- Email -->
                                             <div class="mb-4">
                                                 <label for="exampleInputEmail1" class="form-label">Email address
@@ -63,11 +63,26 @@
                                                     <span
                                                         class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
                                                             class="bi bi-envelope-fill"></i></span>
-                                                    <input type="email"
+                                                    <input type="email" name = "email"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="E-mail" id="exampleInputEmail1">
+                                                        placeholder="E-mail" id="exampleInputEmail1" required>
                                                 </div>
                                             </div>
+
+                                            <!-- username -->
+                                            <div class="mb-4">
+                                                <label for="username" class="form-label">Username
+                                                    *</label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <input type="text" name = "username"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="Username" id="username" required>
+                                                </div>
+                                            </div>
+
                                             <!-- Password -->
                                             <div class="mb-4">
                                                 <label for="inputPassword5" class="form-label">Password *</label>
@@ -75,13 +90,13 @@
                                                     <span
                                                         class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
                                                             class="fas fa-lock"></i></span>
-                                                    <input type="password"
+                                                    <input type="password" name="password"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="*********" id="inputPassword5">
+                                                        placeholder="*********" id="inputPassword5" required>
                                                 </div>
                                             </div>
                                             <!-- Confirm Password -->
-                                            <div class="mb-4">
+                                            <!-- <div class="mb-4">
                                                 <label for="inputPassword6" class="form-label">Confirm Password
                                                     *</label>
                                                 <div class="input-group input-group-lg">
@@ -92,19 +107,152 @@
                                                         class="form-control border-0 bg-light rounded-end ps-1"
                                                         placeholder="*********" id="inputPassword6">
                                                 </div>
-                                            </div>
-                                            <!-- Check box -->
+                                            </div> -->
+                                            
+                                            <!-- firstname -->
                                             <div class="mb-4">
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" id="checkbox-1">
-                                                    <label class="form-check-label" for="checkbox-1">By signing up, you
-                                                        agree to the<a href="#"> terms of service</a></label>
+                                                <label for="firstname" class="form-label">First Name
+                                                    *</label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <input type="text" name = "firstName"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="i,e. John" id="firstName">
                                                 </div>
                                             </div>
+
+                                            <!-- lastname -->
+                                            <div class="mb-4">
+                                                <label for="lastname" class="form-label">Last Name
+                                                    *</label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <input type="text" name = "lastName"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="i,e. Doe" id="lastName">
+                                                </div>
+                                            </div>
+
+                                            <!-- title -->
+
+                                            <div class="mb-4">
+                                                <label for="title" class="form-label">Title
+                                                    *</label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <input type="text" name = "title"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="e,g. Graphic Designer" id="title">
+                                                </div>
+                                            </div>
+
+                                            <!-- role -->
+                                            <div class="mb-4">
+                                                <label for="exampleInputEmail1" class="form-label">Role
+                                                    *</label>
+                                                    <select type="text" name = "role" class="form-control border-0 bg-light rounded-end ps-1" id="role">
+                                                        <option>teacher</option>
+                                                        <option>student</option>
+                                                    </select>
+                                            </div>
+
+                                            <!-- education -->
+                                            <div class="mb-4">
+                                                <label for="education" class="form-label">Education
+                                                    *</label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <input type="text" name = "education"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="i,e BSCS" id="education">
+                                                </div>
+                                            </div>
+
+                                            <!-- bio -->
+                                            <div class="mb-4">
+                                                <label for="bio" class="form-label">Bio
+                                                    *</label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <textarea  name = "bio"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="Description about you." id="bio"></textarea>
+                                                </div>
+                                            </div>
+
+                                            <!-- subjects -->
+                                            <div class="mb-4">
+                                                <label for="subjects" class="form-label">Subjects
+                                                    *</label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <input type="text" name = "subjects"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="i,e BSCS" id="subjects">
+                                                </div>
+                                            </div>
+
+                                            <!-- country -->
+                                            <div class="mb-4">
+                                                <label for="country" class="form-label">Country
+                                                    </label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <input type="text" name = "country"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="e,g Pakistan" id="country">
+                                                </div>
+                                            </div>
+
+                                            <!-- city -->
+                                            <div class="mb-4">
+                                                <label for="city" class="form-label">City
+                                                    </label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <input type="text" name = "city"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="i,e Lahore" id="city">
+                                                </div>
+                                            </div>
+
+
+
+
+                                             <!-- profile Picture -->
+                                             <div class="mb-4">
+                                                <label for="profilepicture" class="form-label">Profile Picture
+                                                    *</label>
+                                                <div class="input-group input-group-lg">
+                                                    <span
+                                                        class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                            class="bi bi-envelope-fill"></i></span>
+                                                    <input type="file" name="profile.profilePicture"
+                                                        class="form-control border-0 bg-light rounded-end ps-1"
+                                                        placeholder="i,e BSCS" id="profilePicture">
+                                                </div>
+                                            </div>
+                                            
                                             <!-- Button -->
                                             <div class="align-items-center mt-0">
                                                 <div class="d-grid">
-                                                    <button class="btn btn-primary mb-0" type="button">Sign Up</button>
+                                                    <button class="btn btn-primary mb-0" type="submit">Sign Up</button>
                                                 </div>
                                             </div>
                                         </form>

@@ -38,7 +38,8 @@ const userSchema = new mongoose.Schema({
             country: { type: String },
             city: { type: String }
         },
-        profilePicture: String
+        profilePicture: String,
+        title: String,
     },
     createdAt: {
         type: Date,

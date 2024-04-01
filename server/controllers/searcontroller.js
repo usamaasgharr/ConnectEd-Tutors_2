@@ -4,9 +4,8 @@ const User = require("../models/user");
 
 const getSearchResult = async (req, res, next) => {
 
-    console.log(req.query);
     const { role, search_query, subject, country, city } = req.query;
-
+    console.log(country);
     // Construct the base query
     let query = {};
 
@@ -32,20 +31,38 @@ const getSearchResult = async (req, res, next) => {
     
 
     // Add country filter if country is specified
-    if (country) {
+    if (country && country !== 'all' ) {
         query["profile.location.country"] = { $regex: new RegExp(country, 'i') };
     }
 
     // Add city filter if city is specified
-    if (city) {
+    if (city && city !== 'all') {
         query["profile.location.city"] = { $regex: new RegExp(city, 'i') };
     }
 
+    console.log(query);
     // Execute the query using your MongoDB driver
     try {
         const data = await User.find(query, { profile: 1, username: 1, email: 1 });
+        const profiles = await User.find({},{ profile: 1});
+        const subjects = [];
+        profiles.forEach(item=> {
+            item.profile.subjects.forEach(subject =>{
+                if (!subjects.includes(subject)){
+                    subjects.push(subject)
+                }
+            })
+        })
 
-        res.render('instructors-list', {data})
+        const countrys = [];
+        profiles.forEach(item=> {
+                if (!countrys.includes(item.profile.location.country)){
+                    countrys.push(item.profile.location.country)
+                }
+        })
+
+        res.render('instructors-list', {data, subjects, countrys})
+
     } catch (err) {
         console.error('Error fetching data from MongoDB:', err);
         res.status(500).json({ error: 'Internal server error' });

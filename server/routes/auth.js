@@ -23,6 +23,9 @@ router.post('/signup', signupValidation,  authController.signup);
 // login route
 router.post('/login', loginValidation, authController.login)
 
+// signout
+router.get('/signout', authController.signout)
+
 
 
 module.exports = router;

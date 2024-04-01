@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const authMiddleware = (req, res, next) => {
   // Get the token from the request headers
   const token = req.cookies.token;
+  console.log(token);
 
   if (!token) {
     return res.redirect('/login');

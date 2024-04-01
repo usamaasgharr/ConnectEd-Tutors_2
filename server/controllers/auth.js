@@ -50,8 +50,8 @@ const signup = async (req, res) => {
             }
 
             // Extract user data from request body
-            const { username, email, password, role,firstName, lastName, education, bio, subjects, location  } = req.body;
-
+            const { username, email, password, role,firstName, lastName, education, bio, subjects, country, city, title  } = req.body;
+            console.log(req.body)
             const existingUsername = await User.findOne({ username });
             if (existingUsername) {
                 return res.status(400).json({ message: 'User with this username already exists' });
@@ -80,7 +80,8 @@ const signup = async (req, res) => {
                     education,
                     bio,
                     subjects,
-                    location,
+                    location: {country, city},
+                    title,
                     profilePicture // Assign profile picture
                 }
             });
@@ -127,9 +128,9 @@ const login = async (req, res) => {
         }
         const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, 'your-secret-key', { expiresIn: '12000hr' });
 
-        console.log(token)
+        // console.log(token)
         res.cookie('token', token, { httpOnly: true });
-        res.redirect('/dashboard');
+        res.redirect('/user/dashboard');
 
 
     } catch (error) {
@@ -176,6 +177,22 @@ const Adminlogin = async (req, res) => {
     }
 }
 
-module.exports = { signup, login , Adminlogin };
+
+// signout
+const signout = (req, res) => {
+    try {
+        // Clear the token cookie by setting its value to an empty string and expiring it
+        res.cookie('token', '', { expires: new Date(0), httpOnly: true });
+        
+        // Redirect the user to the login page or any other appropriate page
+        res.redirect('/login');
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+
+module.exports = { signup, login , Adminlogin , signout};
 
 

@@ -147,27 +147,38 @@
                     <!-- Title -->
                     <h5 class="mb-0">Hi, I am</h5>
                     <h1 class="mb-0 text-capitalize"><%= user.profile.firstName %> <%= user.profile.lastName %></h1>
-                    <p>Graphic Designer</p>
+                    <p><%= user.profile.title %></p>
                     <!-- Content -->
                     <p class="mt-4"><%= user.profile.bio %></p>
                     <!-- Personal info -->
                     <ul class="list-group list-group-borderless">
                         <li class="list-group-item px-0">
+                            <span class="h6 fw-light"><i class="fas fa-fw fa-map-marker-alt text-primary me-1 me-sm-3"></i>Username:</span>
+                            <span><%= user.username %></span>
+                        </li>
+                        <li class="list-group-item px-0">
                             <span class="h6 fw-light"><i class="fas fa-fw fa-map-marker-alt text-primary me-1 me-sm-3"></i>Location:</span>
-                            <span><%= user.profile.location[0] %></span>
+                            <span><%= user.profile.location.city %>, <%= user.profile.location.country %></span>
                         </li>
                         <li class="list-group-item px-0">
                             <span class="h6 fw-light"><i class="fas fa-fw fa-envelope text-primary me-1 me-sm-3"></i>Email:</span>
                             <span><%= user.email %></span>
                         </li>
-                        <li class="list-group-item px-0">
+                        <!-- <li class="list-group-item px-0">
                             <span class="h6 fw-light"><i class="fas fa-fw fa-headphones text-primary me-1 me-sm-3"></i>Phone number:</span>
                             <span>+896-789-546</span>
-                        </li>
-                        <li class="list-group-item px-0">
+                        </li> -->
+                        <!-- <li class="list-group-item px-0">
                             <span class="h6 fw-light"><i class="fas fa-fw fa-globe text-primary me-1 me-sm-3"></i>Website:</span>
                             <span>https://eduport.webestica.com/</span>
-                        </li>
+                        </li> -->
+
+                        <% for (let subject of user.profile.subjects) { %>
+                            <li class="list-group-item px-0">
+                                <span class="h6 fw-light"><i class="fas fa-fw fa-envelope text-primary me-1 me-sm-3"></i>Expertise:</span>
+                                <span><%= subject %></span>
+                            </li>
+                        <% } %>
                     </ul>
     
                     <!-- Counter START -->

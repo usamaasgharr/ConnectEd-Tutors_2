@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const cookieParser = require('cookie-parser');
+
 
 const connectDB = require('./config/db'); 
 const appRoutes = require('./routes/index')
@@ -26,6 +28,8 @@ app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(cookieParser());
 
 
 // route to sereve images outside of public folder

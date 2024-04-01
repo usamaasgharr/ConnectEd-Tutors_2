@@ -45,51 +45,45 @@
             <!-- Search option START -->
             <div class="row mb-4 align-items-center">
                 <!-- Search bar -->
-                <div class="col-sm-6 col-xl-4">
-                    <form class="bg-body shadow rounded p-2" action = '/search' method="get">
+                <!-- <div class="col-sm-6 col-xl-4"> -->
+                    <form class="bg-body shadow rounded p-2" action="/search" method="get">
                         <div class="input-group input-borderless">
-                            <input class="form-control me-1" type="search" placeholder="Search instructor" name = "search_query" id = "search_query">
-                            <button type="button" class="btn btn-primary mb-0 rounded"><i class="fas fa-search"></i></button>
+                            <input class="form-control me-1" type="search" placeholder="Search instructor" name="search_query" id="search_query">
                         </div>
-                    </form>
-                </div>
-    
+                    
+                <!-- </div> -->
+            
                 <!-- Select option -->
                 <div class="col-sm-6 col-xl-3 mt-3 mt-lg-0">
-                    <form class="bg-body shadow rounded p-2 input-borderless" action = '/search' method= 'get'>
-                        <select class="form-select form-select-sm js-choice" aria-label=".form-select-sm">
-                            <option value="All">Category</option>
-                            <option>All</option>
-                            <option>Development</option>
-                            <option>Design</option>
-                            <option>Accounting</option>
-                            <option>Translation</option>
-                            <option>Finance</option>
-                            <option>Legal</option>
-                            <option>Photography</option>
-                            <option>Writing</option>
-                            <option>Marketing</option>
-                        </select>
-                    </form>
+                    <select class="form-select form-select-sm js-choice" aria-label=".form-select-sm" name="subject" id="subject">
+                        <option value="all">Category</option>
+                        <% for (let subject of subjects) { %>
+                            <option value="<%= subject %>"><%= subject %></option>
+                        <% } %>
+                    </select>
                 </div>
-    
+            
                 <!-- Select option -->
                 <div class="col-sm-6 col-xl-3 mt-3 mt-xl-0">
-                    <form class="bg-body shadow rounded p-2 input-borderless">
-                        <select class="form-select form-select-sm js-choice" aria-label=".form-select-sm">
-                            <option value="">Sort by</option>
-                            <option>Most popular</option>
-                            <option>Most viewed</option>
-                            <option>Top rated</option>
-                        </select>
-                    </form>
+                    <select class="form-select form-select-sm js-choice" aria-label=".form-select-sm" name="country" id="country">
+                        <option value="all">Location</option>
+                        <% for (let country of countrys) { %>
+                            <option value="<%= country %>"><%= country %></option>
+                        <% } %>
+                    </select>
                 </div>
-    
+            
                 <!-- Button -->
                 <div class="col-sm-6 col-xl-2 mt-3 mt-xl-0 d-grid">
-                    <a href="#" class="btn btn-lg btn-primary mb-0">Filter Results</a>
+                    <!-- "Filter Results" button as submit -->
+                    <button type="submit" class="btn btn-lg btn-primary mb-0">Filter Results</button>
                 </div>
+                <!-- Close the form here -->
+                </form>
             </div>
+            
+            
+            
             <!-- Search option END -->
     
             <!-- Instructor list START -->
@@ -113,7 +107,7 @@
                                     <div class="d-sm-flex justify-content-sm-between mb-2 mb-sm-3">
                                         <div>
                                             <h5 class="card-title mb-0"><a href="/user/<%= user.username %>"><%= user.profile.firstName %> <%= user.profile.lastName %></a></h5>
-                                            <p class="small mb-2 mb-sm-0">Professor at Sigma College</p>
+                                            <p class="small mb-2 mb-sm-0"><%= user.profile.title %></p>
                                         </div>
                                         <span class="h6 fw-light">4.3<i class="fas fa-star text-warning ms-1"></i></span>
                                     </div>
