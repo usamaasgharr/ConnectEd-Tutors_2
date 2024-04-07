@@ -1,0 +1,53 @@
+
+
+<%- include('./includes/head.ejs') %>
+
+</head>
+
+<body>
+
+<!-- Header START -->
+<%- include('./includes/navigation.ejs') %>
+<!-- Header END -->
+
+<!-- **************** MAIN CONTENT START **************** -->
+<main>
+	
+    <!-- =======================
+    Page Banner START -->
+    <%- include('./includes/main.ejs')%>
+    
+                <!-- Main content START -->
+                <div class="col-xl-9">
+                    <div class="card">
+                        <!-- Card header -->
+                        <div class="card-header">
+                            <h3 class="mb-0">Delete your account</h3>
+                            <p class="mb-0">Delete or Close your account permanently.</p>
+                        </div>
+                        <!-- Card body -->
+                        <div class="card-body p-4">
+                            <span class="text-danger h4">Warning</span>
+                            <p>
+                                If you close your account, you will be unsubscribed from all offers, and will lose access forever.
+                            </p>
+                            <a href="/user/delete" class="btn btn-danger">Close My Account</a>
+                        </div>
+                    </div>
+                </div>
+                
+
+    
+</main>
+
+<%- include('./includes/footer') -%>
+<!-- ======================= Footer END -->
+
+<!-- Back to top -->
+<div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
+
+<!-- Bootstrap JS -->
+<script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

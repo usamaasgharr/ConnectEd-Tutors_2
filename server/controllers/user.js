@@ -9,8 +9,8 @@ const getProfile = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not Found' });
         }
-
-        res.status(200).json({ user });
+        const role = req.user.role;
+        res.status(200).render('edit-profile', { user, role });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -20,8 +20,9 @@ const getProfile = async (req, res) => {
 // Update user profile including profile picture upload
 const updateProfile = async (req, res) => {
     try {
-        const { firstName, lastName, education, bio, subjects, location } = req.body;
-        const { profilePicture } = req.files; // Assuming the profile picture is uploaded as 'profilePicture'
+
+        console.log(req.query);
+        const { firstName, lastName, education, bio, subjects, city, country, title } = req.body;
 
         const user = await User.findById(req.user.userId);
 
@@ -33,15 +34,12 @@ const updateProfile = async (req, res) => {
         user.profile.firstName = firstName || user.profile.firstName;
         user.profile.lastName = lastName || user.profile.lastName;
         user.profile.education = education || user.profile.education;
+        user.profile.title = title || user.profile.title;
         user.profile.bio = bio || user.profile.bio;
         user.profile.subjects = subjects || user.profile.subjects;
-        user.profile.location = location || user.profile.location;
+        user.profile.location.city = city || user.profile.location.city;
+        user.profile.location.country = country || user.profile.location.country;
 
-        // Update profile picture if provided
-        if (profilePicture) {
-            user.profile.profilePicture.data = fs.readFileSync(profilePicture.path);
-            user.profile.profilePicture.contentType = profilePicture.mimetype;
-        }
 
         await user.save();
 
@@ -58,11 +56,11 @@ const updateProfile = async (req, res) => {
 const renderUserProfilePage = async (req, res, next) => {
 
     const username = req.params.username;
-    
+
 
     try {
-        const user = await User.findOne({username: username});
-        
+        const user = await User.findOne({ username: username });
+
         if (!user) {
             return res.status(404).send('User not found');
         }
@@ -75,4 +73,49 @@ const renderUserProfilePage = async (req, res, next) => {
     }
 };
 
-module.exports = { getProfile, updateProfile , renderUserProfilePage};
+// display dashboard on successfult login
+const dashboard = async (req, res, next) => {
+
+    const user = await User.findById(req.user.userId, 'profile');
+
+    if (!user) {
+        console.log('User Not Found');
+        res.redirect('/login')
+    }
+
+    const role = req.user.role;
+    res.render('dashboard', { user, role });
+
+}
+
+// deleteAccount
+const deleteAccount = async (req, res, next) => {
+    const user = await User.findById(req.user.userId, 'profile');
+
+    if (!user) {
+        console.log('User Not Found');
+        res.redirect('./login')
+    }
+
+    const role = req.user.role;
+    res.render('delete-account', { user, role })
+}
+
+const accountDelete = async (req, res, next) => {
+    try {
+        // Assuming req.user.userId contains the ID of the user to be deleted
+        const deletedUser = await User.findByIdAndDelete(req.user.userId);
+
+        if (!deletedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log('Account Deleted , Id : ', req.user.userId);
+        res.redirect('/signout')
+    } catch (error) {
+        console.error('Error deleting user', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete };

@@ -37,7 +37,6 @@ app.use(cookieParser());
 app.get('/uploads/:imageName', (req, res) => {
     const imageName = req.params.imageName;
     const imagePath = path.join(__dirname, 'uploads', imageName);
-    console.log(imagePath)
 
     // Check if the image file exists
     if (fs.existsSync(imagePath)) {

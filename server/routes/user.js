@@ -3,7 +3,7 @@ const express = require('express');
 const userControllers = require('../controllers/user')
 const authMiddleware = require('../middleware/auth')
 
-const userOperationsRoutes = require('./userOperations')
+// const userOperationsRoutes = require('./userOperations')
 
 
 const router = express.Router();
@@ -11,18 +11,27 @@ const router = express.Router();
 router.use(express.static('public'));
 
 
+
+// updated the edited profule information in db
+router.post('/edit-profile', authMiddleware, userControllers.updateProfile);
+
 // get profile data form db
-router.get('/profile', authMiddleware, userControllers.getProfile);
+router.get('/edit-profile', authMiddleware, userControllers.getProfile);
 
-// updated the edited profule information in db
-router.put('/profile', authMiddleware, userControllers.updateProfile);
+// display user dashboard
+router.get('/dashboard', authMiddleware , userControllers.dashboard)
 
-// instructor Routes
-router.use('/', userOperationsRoutes)
+// display delete-account page 
+router.get('/delete-account', authMiddleware , userControllers.deleteAccount)
 
+// implementing delete-account page 
+router.get('/delete', authMiddleware , userControllers.accountDelete )
 
-// updated the edited profule information in db
+//see user profile page (search etc)
 router.get('/:username', userControllers.renderUserProfilePage);
+
+
+
 
 
 

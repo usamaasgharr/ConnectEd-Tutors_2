@@ -12,4 +12,6 @@ const router = express.Router();
 router.get('/search', searchControllers.getSearchResult);
 
 
+
+
 module.exports = router;

@@ -41,7 +41,7 @@ const upload = multer({
 const uploadProfilePicture = upload.single('profile.profilePicture');
 
 const signup = async (req, res) => {
-    
+
     try {
         // Handle profile picture upload
         uploadProfilePicture(req, res, async (err) => {
@@ -50,19 +50,18 @@ const signup = async (req, res) => {
             }
 
             // Extract user data from request body
-            const { username, email, password, role,firstName, lastName, education, bio, subjects, country, city, title  } = req.body;
-            console.log(req.body)
+            const { username, email, password, role, firstName, lastName, education, bio, subjects, country, city, title } = req.body;
             const existingUsername = await User.findOne({ username });
             if (existingUsername) {
                 return res.status(400).json({ message: 'User with this username already exists' });
             }
-    
+
             const existingEmail = await User.findOne({ email });
             if (existingEmail) {
                 return res.status(400).json({ message: 'User with this email already exists' });
             }
-            
-            let profilePicture = null; 
+
+            let profilePicture = null;
             if (req.file) {
                 profilePicture = req.file.filename;
             }
@@ -72,7 +71,7 @@ const signup = async (req, res) => {
             const user = new User({
                 username,
                 email,
-                password : hashedPassword,
+                password: hashedPassword,
                 role,
                 profile: {
                     firstName,
@@ -80,16 +79,17 @@ const signup = async (req, res) => {
                     education,
                     bio,
                     subjects,
-                    location: {country, city},
+                    location: { country, city },
                     title,
                     profilePicture // Assign profile picture
                 }
             });
-            
+
             // Save user to database
             await user.save();
+            res.redirect('/login');
 
-            res.status(201).json({ message: 'User registered successfully' });
+
         });
     } catch (error) {
         console.error(error);
@@ -111,24 +111,23 @@ const login = async (req, res) => {
 
         }
 
-        
+
         const { email, password } = req.body;
         const user = await User.findOne({ email });
-        
+
         if (!user) {
             // return res.status(401).json({ message: 'Invalid credentials' });
-            return res.render('sign-in', {errorMessage: "Invalid Crediantials "});
+            return res.render('sign-in', { errorMessage: "Invalid Crediantials " });
         }
 
-        
+
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        
-        if (!isPasswordValid ) {
+
+        if (!isPasswordValid) {
             return res.render('sign-in', { errorMessage: 'Invalid username or password' });
         }
         const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, 'your-secret-key', { expiresIn: '12000hr' });
 
-        // console.log(token)
         res.cookie('token', token, { httpOnly: true });
         res.redirect('/user/dashboard');
 
@@ -150,7 +149,7 @@ const Adminlogin = async (req, res) => {
             return res.status(400).json({ errors: errors.array() });
         }
 
-        
+
         const { username, password } = req.body;
 
         const admin = await Admin.findOne({ username });
@@ -183,7 +182,7 @@ const signout = (req, res) => {
     try {
         // Clear the token cookie by setting its value to an empty string and expiring it
         res.cookie('token', '', { expires: new Date(0), httpOnly: true });
-        
+
         // Redirect the user to the login page or any other appropriate page
         res.redirect('/login');
     } catch (error) {
@@ -193,6 +192,6 @@ const signout = (req, res) => {
 }
 
 
-module.exports = { signup, login , Adminlogin , signout};
+module.exports = { signup, login, Adminlogin, signout };
 
 
