@@ -4,9 +4,14 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const tutorAvailabilitySchema = new Schema({
+    isAvailable: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
     tutor: {
         type: Schema.Types.ObjectId,
-        ref: 'Tutor',
+        ref: 'usersdatas',
         required: true
     },
     date: {
@@ -14,11 +19,15 @@ const tutorAvailabilitySchema = new Schema({
         required: true
     },
     start_time: {
-        type: String, // or Date if you want to store time in ISO format
+        type: String, 
         required: true
     },
     end_time: {
-        type: String, // or Date if you want to store time in ISO format
+        type: String,
+        required: true
+    },
+    price:{
+        type: Number,
         required: true
     }
 });

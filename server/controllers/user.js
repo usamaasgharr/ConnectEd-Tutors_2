@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const fs = require('fs');
+const TutorAvailability = require('../models/TutorAvailability');
 
 // Get user profile
 const getProfile = async (req, res) => {
@@ -77,6 +78,22 @@ const renderUserProfilePage = async (req, res, next) => {
 const dashboard = async (req, res, next) => {
 
     const user = await User.findById(req.user.userId, 'profile');
+    const sessions = await TutorAvailability.find({tutor :req.user.userId});
+    if (!user) {
+        console.log('User Not Found');
+        res.redirect('/login')
+    }
+
+    const role = req.user.role;
+    res.render('dashboard', { user, role, sessions });
+
+}
+
+
+//chats
+const chats = async (req, res, next) => {
+
+    const user = await User.findById(req.user.userId, 'profile');
 
     if (!user) {
         console.log('User Not Found');
@@ -84,9 +101,49 @@ const dashboard = async (req, res, next) => {
     }
 
     const role = req.user.role;
-    res.render('dashboard', { user, role });
+    res.render('chats', {user, role});
 
 }
+
+// sessions 
+const addSessions = async (req, res, next) => {
+    const user = await User.findById(req.user.userId, 'profile');
+
+    if (!user) {
+        console.log('User Not Found');
+        res.redirect('/login')
+    }
+
+    const role = req.user.role;
+    res.render('addSessions', {user, role})
+}
+
+const createSession = async (req, res, next) => {
+    try {
+        // Extract data from the request body
+        const { start_time, end_time, date, price } = req.body;
+        // Create a new TutorAvailability object
+        const newSession = new TutorAvailability({
+          tutor: req.user.userId, // Assuming req.user contains the logged-in user's data
+          date,
+          start_time,
+          end_time,
+          price
+        });
+    
+        // Save the new session to the database
+        await newSession.save();
+
+    
+        // Redirect the user or send a response indicating success
+        res.redirect('/user/dashboard');
+      } catch (error) {
+        // Handle errors
+        console.error("Error adding session:", error);
+        res.status(500).send("An error occurred while adding the session.");
+      }
+}
+    
 
 // deleteAccount
 const deleteAccount = async (req, res, next) => {
@@ -118,4 +175,4 @@ const accountDelete = async (req, res, next) => {
     }
 };
 
-module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete };
+module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats , addSessions, createSession};

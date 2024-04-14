@@ -1,6 +1,4 @@
-// controllers/tutorAvailabilityController.js
-
-const TutorAvailability = require('../models/tutorAvailability');
+// controllers/tutorAvailabilityController.j
 
 // Create a new availability slot for a tutor
 const createAvailability = async (req, res) => {

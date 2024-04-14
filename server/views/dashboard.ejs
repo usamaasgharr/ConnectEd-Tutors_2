@@ -1,95 +1,111 @@
 <%- include('./includes/head.ejs') %>
 
-<link rel="stylesheet" type="text/css" href="assets/vendor/apexcharts/css/apexcharts.css">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/apexcharts/css/apexcharts.css">
 
-</head>
+    </head>
 
-<body>
+    <body>
 
-<!-- Header START -->
-<%- include('./includes/navigation.ejs') %>
-<!-- Header END -->
+        <!-- Header START -->
+        <%- include('./includes/navigation.ejs') %>
+            <!-- Header END -->
 
-<!-- **************** MAIN CONTENT START **************** -->
-<main>
-	
-    <!-- =======================
+            <!-- **************** MAIN CONTENT START **************** -->
+            <main>
+
+                <!-- =======================
     Page Banner START -->
-    <%- include('./includes/main.ejs')%>
-    
-                <!-- Main content START -->
-                <div class="col-xl-9">
-    
-                    <!-- Counter boxes START -->
-                    <div class="row g-4">
-                        <!-- Counter item -->
-                        <div class="col-sm-6 col-lg-4">
-                            <div class="d-flex justify-content-center align-items-center p-4 bg-warning bg-opacity-15 rounded-3">
-                                <span class="display-6 text-warning mb-0"><i class="fas fa-tv fa-fw"></i></span>
-                                <div class="ms-4">
-                                    <div class="d-flex">
-                                        <h5 class="purecounter mb-0 fw-bold" data-purecounter-start="0" data-purecounter-end="25" data-purecounter-delay="200">0</h5>
+                <%- include('./includes/main.ejs')%>
+
+                    <!-- Main content START -->
+                    <div class="col-xl-9">
+
+                        <!-- Counter boxes START -->
+                        <div class="row g-4">
+                            <!-- Counter item -->
+                            <div class="col-sm-6 col-lg-4">
+                                <div
+                                    class="d-flex justify-content-center align-items-center p-4 bg-warning bg-opacity-15 rounded-3">
+                                    <span class="display-6 text-warning mb-0"><i class="fas fa-tv fa-fw"></i></span>
+                                    <div class="ms-4">
+                                        <div class="d-flex">
+                                            <h5 class="purecounter mb-0 fw-bold" data-purecounter-start="0"
+                                                data-purecounter-end="25" data-purecounter-delay="200">0</h5>
+                                        </div>
+                                        <span class="mb-0 h6 fw-light">Total Courses</span>
                                     </div>
-                                    <span class="mb-0 h6 fw-light">Total Courses</span>
+                                </div>
+                            </div>
+                            <!-- Counter item -->
+                            <div class="col-sm-6 col-lg-4">
+                                <div
+                                    class="d-flex justify-content-center align-items-center p-4 bg-purple bg-opacity-10 rounded-3">
+                                    <span class="display-6 text-purple mb-0"><i
+                                            class="fas fa-user-graduate fa-fw"></i></span>
+                                    <div class="ms-4">
+                                        <div class="d-flex">
+                                            <h5 class="purecounter mb-0 fw-bold" data-purecounter-start="0"
+                                                data-purecounter-end="25" data-purecounter-delay="200">0</h5>
+                                            <span class="mb-0 h5">K+</span>
+                                        </div>
+                                        <span class="mb-0 h6 fw-light">Total Students</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Counter item -->
+                            <div class="col-sm-6 col-lg-4">
+                                <div
+                                    class="d-flex justify-content-center align-items-center p-4 bg-info bg-opacity-10 rounded-3">
+                                    <span class="display-6 text-info mb-0"><i class="fas fa-gem fa-fw"></i></span>
+                                    <div class="ms-4">
+                                        <div class="d-flex">
+                                            <h5 class="purecounter mb-0 fw-bold" data-purecounter-start="0"
+                                                data-purecounter-end="12" data-purecounter-delay="300">0</h5>
+                                            <span class="mb-0 h5">K</span>
+                                        </div>
+                                        <span class="mb-0 h6 fw-light">Enrolled Students</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Counter item -->
-                        <div class="col-sm-6 col-lg-4">
-                            <div class="d-flex justify-content-center align-items-center p-4 bg-purple bg-opacity-10 rounded-3">
-                                <span class="display-6 text-purple mb-0"><i class="fas fa-user-graduate fa-fw"></i></span>
-                                <div class="ms-4">
-                                    <div class="d-flex">
-                                        <h5 class="purecounter mb-0 fw-bold" data-purecounter-start="0" data-purecounter-end="25" data-purecounter-delay="200">0</h5>
-                                        <span class="mb-0 h5">K+</span>
+                        <!-- Counter boxes END -->
+
+                        <h1 class="mt-5">Added Session</h1>
+                        <!-- Chart START -->
+                        <div class="row g-4 mt-2">
+                            <% sessions.forEach((item)=>{%>
+                                <div class="col-sm-6 col-lg-4">
+                                    <div
+                                        class="d-flex justify-content-center align-items-center p-4 bg-warning bg-opacity-15 rounded-3">
+                                        <form action="/user/edit-sessions" method = 'post'>
+                                            <div class="ms-4">
+                                                <div class="d-flex">
+                                                    <h5>Time: <%= item.start_time %> - <%= item.end_time %>
+                                                    </h5><br>
+                                                </div>
+                                                <h6>Date: <%= item.date %>
+                                                </h6>
+                                                <span class="mb-0 h6 fw-light"></span>
+                                                <input type="hidden" value="<%= item._id %>">
+                                                <button class="btn btn-secondary" type="submit">Edit</button>
+                                                <button class="btn btn-danger" type="submit">Delete</button>
+                                            </div>
+
+                                        </form>
                                     </div>
-                                    <span class="mb-0 h6 fw-light">Total Students</span>
                                 </div>
-                            </div>
+                                <% })%>
+                                    <!-- Counter item -->
+
                         </div>
-                        <!-- Counter item -->
-                        <div class="col-sm-6 col-lg-4">
-                            <div class="d-flex justify-content-center align-items-center p-4 bg-info bg-opacity-10 rounded-3">
-                                <span class="display-6 text-info mb-0"><i class="fas fa-gem fa-fw"></i></span>
-                                <div class="ms-4">
-                                    <div class="d-flex">
-                                        <h5 class="purecounter mb-0 fw-bold" data-purecounter-start="0" data-purecounter-end="12" data-purecounter-delay="300">0</h5>
-                                        <span class="mb-0 h5">K</span>
-                                    </div>
-                                    <span class="mb-0 h6 fw-light">Enrolled Students</span>
-                                </div>
-                            </div>
-                        </div>
+
+
+
                     </div>
-                    <!-- Counter boxes END -->
-    
-                    <!-- Chart START -->
-                    <div class="row mt-5">
-                        <div class="col-12">
-                            <div class="card card-body border p-4 h-100">
-                                <div class="row g-4">
-                                    <!-- Content -->
-                                    <div class="col-sm-6 col-md-4">
-                                        <span class="badge bg-dark text-white">Current Month</span>
-                                        <h4 class="text-primary my-2">$35000</h4>
-                                        <p class="mb-0"><span class="text-success me-1">0.20%<i class="bi bi-arrow-up"></i></span>vs last month</p>
-                                    </div>
-                                    <!-- Content -->
-                                    <div class="col-sm-6 col-md-4">
-                                        <span class="badge bg-dark text-white">Last Month</span>
-                                        <h4 class="my-2">$28000</h4>
-                                        <p class="mb-0"><span class="text-danger me-1">0.10%<i class="bi bi-arrow-down"></i></span>Then last month</p>
-                                    </div>
-                                </div>
-    
-                                <!-- Apex chart -->
-                                <!-- <div id="ChartPayout"></div> -->
-    
-                            </div>
-                        </div>
+                    </div>
                     </div>
                     <!-- Chart END -->
-    
+
                     <!-- Course List table START -->
                     <div class="row">
                         <div class="col-12">
@@ -102,44 +118,45 @@
                                     </div>
                                 </div> -->
                                 <!-- Card header END -->
-    
+
                                 <!-- Card body START -->
-                               
+
                                 <!-- Card body START -->
                             </div>
                         </div>
                     </div>
                     <!-- Course List table END -->
-                </div>
-                <!-- Main content END -->
-            </div><!-- Row END -->
-        </div>
-    </section>
-    <!-- =======================
+                    </div>
+                    <!-- Main content END -->
+                    </div><!-- Row END -->
+                    </div>
+                    </section>
+                    <!-- =======================
     Page content END -->
-    
-    </main>
-    <!-- **************** MAIN CONTENT END **************** -->
 
-    <!-- =======================
+            </main>
+            <!-- **************** MAIN CONTENT END **************** -->
+
+            <!-- =======================
 Footer START -->
-<%- include('./includes/footer') -%>
-<!-- =======================
+            <%- include('./includes/footer') -%>
+                <!-- =======================
 Footer END -->
 
-<!-- Back to top -->
-<div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
+                <!-- Back to top -->
+                <div class="back-top"><i
+                        class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
 
-<!-- Bootstrap JS -->
-<script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+                <!-- Bootstrap JS -->
+                <script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Vendors -->
-<script src="assets/vendor/purecounterjs/dist/purecounter_vanilla.js"></script>
-<script src="assets/vendor/apexcharts/js/apexcharts.min.js"></script>
+                <!-- Vendors -->
+                <script src="assets/vendor/purecounterjs/dist/purecounter_vanilla.js"></script>
+                <script src="assets/vendor/apexcharts/js/apexcharts.min.js"></script>
 
-<!-- Template Functions -->
-<script src="assets/js/functions.js"></script>
+                <!-- Template Functions -->
+                <script src="assets/js/functions.js"></script>
 
-</body>
-</html>
+    </body>
 
+    </html>

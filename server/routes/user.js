@@ -27,6 +27,15 @@ router.get('/delete-account', authMiddleware , userControllers.deleteAccount)
 // implementing delete-account page 
 router.get('/delete', authMiddleware , userControllers.accountDelete )
 
+// implementing delete-account page 
+router.get('/chats', authMiddleware , userControllers.chats )
+
+// sessions management
+router.get('/session_management', authMiddleware , userControllers.addSessions )
+router.post('/session_management', authMiddleware , userControllers.createSession )
+
+// router.post('/session_management', authMiddleware , userControllers.edit_sessions )
+
 //see user profile page (search etc)
 router.get('/:username', userControllers.renderUserProfilePage);
 

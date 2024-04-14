@@ -3,7 +3,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
+const http = require('http');
 const cookieParser = require('cookie-parser');
+const { Server } = require("socket.io");
 
 
 const connectDB = require('./config/db'); 
@@ -11,9 +13,16 @@ const appRoutes = require('./routes/index')
 
 const app = express();
 
+const server = http.createServer(app);
+
+const io = new Server(server);
+
 
 const PORT = process.env.PORT || 5000;
 
+io.on('connection', (socket) => {
+    console.log('a user connected');
+  });
 
 // Call the connectDB function to establish the database connection
 connectDB();
@@ -53,12 +62,8 @@ app.get('/uploads/:imageName', (req, res) => {
 
 app.use(appRoutes);
 
-
-
-
-
 // Start the server
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server is listening at http://localhost:${PORT}`);
 });
 
