@@ -77,18 +77,25 @@
                                 <div class="col-sm-6 col-lg-4">
                                     <div
                                         class="d-flex justify-content-center align-items-center p-4 bg-warning bg-opacity-15 rounded-3">
-                                        <form action="/user/edit-sessions" method = 'post'>
+                                        
                                             <div class="ms-4">
                                                 <div class="d-flex">
                                                     <h5>Time: <%= item.start_time %> - <%= item.end_time %>
                                                     </h5><br>
                                                 </div>
-                                                <h6>Date: <%= item.date %>
-                                                </h6>
+                                                <h6>Date: <%= item.date %></h6>
+                                                <h6>Price : <%= item.price %></h6>
                                                 <span class="mb-0 h6 fw-light"></span>
-                                                <input type="hidden" value="<%= item._id %>">
+                                            <div class="d-flex">
+                                            <form class="m-1" action="/user/edit-session" method = 'get'>
+                                                <input type="hidden" value="<%= item._id %>" name="sessionId">
                                                 <button class="btn btn-secondary" type="submit">Edit</button>
+                                            </form>
+                                            <form class="m-1" action="/user/delete-session" method = 'post'>
+                                                <input type="hidden" value="<%= item._id %>" name="sessionId">
                                                 <button class="btn btn-danger" type="submit">Delete</button>
+                                            </form>
+                                        </div>
                                             </div>
 
                                         </form>

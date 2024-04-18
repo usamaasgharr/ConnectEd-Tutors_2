@@ -22,7 +22,6 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
 
-        console.log(req.query);
         const { firstName, lastName, education, bio, subjects, city, country, title } = req.body;
 
         const user = await User.findById(req.user.userId);
@@ -61,13 +60,19 @@ const renderUserProfilePage = async (req, res, next) => {
 
     try {
         const user = await User.findOne({ username: username });
-
+        
         if (!user) {
             return res.status(404).send('User not found');
         }
 
+        const sessions = await TutorAvailability.find({ tutor: user._id });
+        
+        if (!sessions) {
+            return res.status(404).send('No sessions Added.');
+        }
+
         // Render the user profile page with the retrieved user data
-        res.render('instructor-details', { user });
+        res.render('instructor-details', { user, sessions });
     } catch (err) {
         console.error('Error fetching user data:', err);
         res.status(500).send('Internal server error');
@@ -78,7 +83,7 @@ const renderUserProfilePage = async (req, res, next) => {
 const dashboard = async (req, res, next) => {
 
     const user = await User.findById(req.user.userId, 'profile');
-    const sessions = await TutorAvailability.find({tutor :req.user.userId});
+    const sessions = await TutorAvailability.find({ tutor: req.user.userId });
     if (!user) {
         console.log('User Not Found');
         res.redirect('/login')
@@ -101,7 +106,7 @@ const chats = async (req, res, next) => {
     }
 
     const role = req.user.role;
-    res.render('chats', {user, role});
+    res.render('chats', { user, role });
 
 }
 
@@ -115,7 +120,7 @@ const addSessions = async (req, res, next) => {
     }
 
     const role = req.user.role;
-    res.render('addSessions', {user, role})
+    res.render('addSessions', { user, role })
 }
 
 const createSession = async (req, res, next) => {
@@ -124,26 +129,84 @@ const createSession = async (req, res, next) => {
         const { start_time, end_time, date, price } = req.body;
         // Create a new TutorAvailability object
         const newSession = new TutorAvailability({
-          tutor: req.user.userId, // Assuming req.user contains the logged-in user's data
-          date,
-          start_time,
-          end_time,
-          price
+            tutor: req.user.userId, // Assuming req.user contains the logged-in user's data
+            date,
+            start_time,
+            end_time,
+            price
         });
-    
+
         // Save the new session to the database
         await newSession.save();
 
-    
+
         // Redirect the user or send a response indicating success
         res.redirect('/user/dashboard');
-      } catch (error) {
+    } catch (error) {
         // Handle errors
         console.error("Error adding session:", error);
         res.status(500).send("An error occurred while adding the session.");
-      }
+    }
 }
-    
+
+// deleet Sessions
+const deleteSession = async (req, res, next) => {
+
+    const deletedSession = await TutorAvailability.findByIdAndDelete(req.body.sessionId);
+
+    if (!deletedSession) {
+        return res.status(404).json({ message: 'Session not found' });
+    }
+
+    res.redirect('/user/dashboard');
+}
+
+// edit Session
+const editSession = async (req, res, next) => {
+    const session = await TutorAvailability.findById(req.query.sessionId);
+
+    if (!session) {
+        return res.status(404).json({ message: 'Session not found' });
+    }
+
+    const user = await User.findById(req.user.userId, 'profile');
+
+    if (!user) {
+        console.log('User Not Found');
+        res.redirect('/login')
+    }
+
+    const role = req.user.role;
+    res.render('edit-session', { user, role, session })
+}
+// update Session in data base
+const updateSession = async (req, res, next) => {
+    try {
+
+        const { start_time, end_time, date, price } = req.body;
+
+        console.log(start_time, end_time, price, date);
+
+        const session = await TutorAvailability.findById(req.body.sessionId)
+        
+
+        if (!session) {
+            return res.status(404).json({ message: 'Session not found' });
+        }
+
+        session.start_time  = start_time || session.start_time;
+        session.end_time = end_time || session.end_time;
+        session.date = date || session.date;
+        session.price = price || session.price;
+
+        await session.save();
+
+        res.redirect('/user/dashboard')
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
 
 // deleteAccount
 const deleteAccount = async (req, res, next) => {
@@ -175,4 +238,4 @@ const accountDelete = async (req, res, next) => {
     }
 };
 
-module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats , addSessions, createSession};
+module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession ,updateSession};

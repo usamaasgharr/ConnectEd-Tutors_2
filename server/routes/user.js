@@ -31,8 +31,17 @@ router.get('/delete', authMiddleware , userControllers.accountDelete )
 router.get('/chats', authMiddleware , userControllers.chats )
 
 // sessions management
+// add sesions 
 router.get('/session_management', authMiddleware , userControllers.addSessions )
 router.post('/session_management', authMiddleware , userControllers.createSession )
+
+//delete Sessions
+router.post('/delete-session', authMiddleware , userControllers.deleteSession )
+
+//edit Sessions
+router.get('/edit-session', authMiddleware , userControllers.editSession )
+router.post('/edit-session', authMiddleware , userControllers.updateSession )
+
 
 // router.post('/session_management', authMiddleware , userControllers.edit_sessions )
 
