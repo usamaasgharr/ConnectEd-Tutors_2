@@ -4,8 +4,7 @@ const User = require("../models/user");
 
 const getSearchResult = async (req, res, next) => {
 
-    const { role, search_query, subject, country, city } = req.query;
-    console.log(country);
+    const { role, search_query, subject, country, city } = req.query
     // Construct the base query
     let query = {};
 
@@ -40,7 +39,6 @@ const getSearchResult = async (req, res, next) => {
         query["profile.location.city"] = { $regex: new RegExp(city, 'i') };
     }
 
-    console.log(query);
     // Execute the query using your MongoDB driver
     try {
         const data = await User.find(query, { profile: 1, username: 1, email: 1 });
@@ -73,7 +71,6 @@ const getSearchResult = async (req, res, next) => {
 
 const getUserProfile = async (req, res) => {
     try {
-        console.log(req.query);
 
         const { userId } = req.query;
 

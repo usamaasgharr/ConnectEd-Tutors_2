@@ -8,6 +8,8 @@ const cookieParser = require('cookie-parser');
 const { Server } = require("socket.io");
 
 
+require('dotenv').config();
+
 const connectDB = require('./config/db'); 
 const appRoutes = require('./routes/index')
 
@@ -18,7 +20,7 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
 io.on('connection', (socket) => {
     console.log('a user connected');
