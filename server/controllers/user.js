@@ -183,8 +183,6 @@ const editSession = async (req, res, next) => {
 const updateSession = async (req, res, next) => {
     try {
 
-        const { start_time, end_time, date, price } = req.body;
-
         console.log(start_time, end_time, price, date);
 
         const session = await TutorAvailability.findById(req.body.sessionId)
@@ -207,6 +205,32 @@ const updateSession = async (req, res, next) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
+
+// Book Session
+
+const bookSession = async (req, res, next) => {
+    try {
+
+        const { sessionId } = req.query;
+
+        const session = await TutorAvailability.findById(sessionId)
+    
+        const tutor = await User.findById(session.tutor._id, { profile: 1 });
+
+
+        if (!session) {
+            return res.status(404).json({ message: 'Session not found' });
+        }
+        res.render('payment', {session, tutor})
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
+
+// //////////////////////////////////////////
 
 // deleteAccount
 const deleteAccount = async (req, res, next) => {
@@ -238,4 +262,4 @@ const accountDelete = async (req, res, next) => {
     }
 };
 
-module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession ,updateSession};
+module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession ,updateSession, bookSession };

@@ -42,6 +42,9 @@ router.post('/delete-session', authMiddleware , userControllers.deleteSession )
 router.get('/edit-session', authMiddleware , userControllers.editSession )
 router.post('/edit-session', authMiddleware , userControllers.updateSession )
 
+// book session
+router.get('/book-this-session', authMiddleware , userControllers.bookSession )
+
 
 // router.post('/session_management', authMiddleware , userControllers.edit_sessions )
 
