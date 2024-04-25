@@ -3,6 +3,7 @@
 <link rel="stylesheet" type="text/css" href="assets/vendor/glightbox/css/glightbox.css">
 <link rel="stylesheet" type="text/css" href="assets/vendor/tiny-slider/tiny-slider.css">
 
+<script src="https://js.stripe.com/v3/"></script>
 
 </head>
 
@@ -26,46 +27,27 @@
           <div class="text-center mb-4">
             <h6>Payment</h6>
           </div>
-          <form action="">
+          <form id="payment-form" action="/user/process-payment" method="POST">
             <h4 class="fw-bold mb-4 pb-2"> Sessions Details:</h4>
             <p class="fw-bold" >Tutor : <%= tutor.profile.firstName %> <%= tutor.profile.lastName %></p>
             <p class="fw-bold" >Session Time : <%= session.start_time %> - <%= session.end_time %></p>
             <p class="fw-bold">Date : <%= session.date %></p>
             <p class="text-danger fw-bold" >Price : <%= session.price %></p>
+            <input type="hidden" name="amount" id="price" value="<%= session.price %>" >
 
-            <h4 class="fw-bold mb-4">Card Information</h4>
-
-            <div data-mdb-input-init class="form-outline mb-4">
-              <input type="text" id="formControlLgXsd" class="form-control form-control-lg"
-                placeholder="Anna Doe" />
-              <label class="form-label" for="formControlLgXsd">Cardholder's Name</label>
+            <div class="form-group">
+              <label for="cardholder_name">Cardholder's Name</label>
+              <input type="text" class="form-control" id="cardholder_name" name="cardholder_name" value="John Doe" required>
             </div>
 
-            <div class="row mb-4">
-              <div class="col-7">
-                <div data-mdb-input-init class="form-outline">
-                  <input type="text" id="formControlLgXM" class="form-control form-control-lg"
-                    placeholder="1234 5678 1234 5678" />
-                  <label class="form-label" for="formControlLgXM">Card Number</label>
-                </div>
-              </div>
-              <div class="col-3">
-                <div data-mdb-input-init class="form-outline">
-                  <input type="password" id="formControlLgExpk" class="form-control form-control-lg"
-                    placeholder="MM/YYYY" />
-                  <label class="form-label" for="formControlLgExpk">Expire</label>
-                </div>
-              </div>
-              <div class="col-2">
-                <div data-mdb-input-init class="form-outline">
-                  <input type="password" id="formControlLgcvv" class="form-control form-control-lg"
-                    placeholder="Cvv" />
-                  <label class="form-label" for="formControlLgcvv">Cvv</label>
-                </div>
+            <div class="form-group">
+              <label for="card-element">Card Information</label>
+              <div id="card-element" class="form-control">
               </div>
             </div>
 
-            <button data-mdb-button-init data-mdb-ripple-init class="btn btn-success btn-lg btn-block">Add card</button>
+
+            <button type="submit" class="btn btn-success mt-4 btn-lg btn-block">Process Transaction</button>
           </form>
         </div>
       </div>
@@ -73,28 +55,47 @@
   </div>
 </section>
 
-    </main>
-    <!-- **************** MAIN CONTENT END **************** -->
-    
-    <!-- ======================= Footer START -->
-    <%- include('./includes/footer') -%>
-    <!-- ======================= Footer END -->
-    
-    <!-- Back to top -->
-    <div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
-    
-    <!-- Bootstrap JS -->
-    <script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Template Functions -->
-    <script src="assets/js/functions.js"></script>
-    
-    
-    <!-- script to handle response after login -->
-    
-    
-    </body>
-    </html>
-    
-    
-    
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+
+<!-- ======================= Footer START -->
+<%- include('./includes/footer') -%>
+<!-- ======================= Footer END -->
+
+<!-- Back to top -->
+<div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
+
+<!-- Bootstrap JS -->
+<script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Template Functions -->
+<script src="assets/js/functions.js"></script>
+
+<!-- Script to handle payment form submission -->
+<!-- Script to handle payment form submission -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var stripe = Stripe('<%= stripe_public_key %>');
+    var elements = stripe.elements();
+  
+    var card = elements.create('card');
+    card.mount('#card-element');
+  
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+  
+      // Use a test token for testing purposes
+      var tokenInput = document.createElement('input');
+      tokenInput.setAttribute('type', 'hidden');
+      tokenInput.setAttribute('name', 'token');
+      tokenInput.setAttribute('value', 'tok_visa'); // Use a test token here
+      form.appendChild(tokenInput);
+      form.submit();
+    });
+  });
+</script>
+
+
+</body>
+</html>

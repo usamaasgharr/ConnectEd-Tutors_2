@@ -44,6 +44,7 @@ router.post('/edit-session', authMiddleware , userControllers.updateSession )
 
 // book session
 router.get('/book-this-session', authMiddleware , userControllers.bookSession )
+router.post('/process-payment', authMiddleware , userControllers.processPayment )
 
 
 // router.post('/session_management', authMiddleware , userControllers.edit_sessions )

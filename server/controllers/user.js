@@ -60,13 +60,13 @@ const renderUserProfilePage = async (req, res, next) => {
 
     try {
         const user = await User.findOne({ username: username });
-        
+
         if (!user) {
             return res.status(404).send('User not found');
         }
 
         const sessions = await TutorAvailability.find({ tutor: user._id });
-        
+
         if (!sessions) {
             return res.status(404).send('No sessions Added.');
         }
@@ -186,13 +186,13 @@ const updateSession = async (req, res, next) => {
         console.log(start_time, end_time, price, date);
 
         const session = await TutorAvailability.findById(req.body.sessionId)
-        
+
 
         if (!session) {
             return res.status(404).json({ message: 'Session not found' });
         }
 
-        session.start_time  = start_time || session.start_time;
+        session.start_time = start_time || session.start_time;
         session.end_time = end_time || session.end_time;
         session.date = date || session.date;
         session.price = price || session.price;
@@ -214,20 +214,93 @@ const bookSession = async (req, res, next) => {
         const { sessionId } = req.query;
 
         const session = await TutorAvailability.findById(sessionId)
-    
+
         const tutor = await User.findById(session.tutor._id, { profile: 1 });
 
 
         if (!session) {
             return res.status(404).json({ message: 'Session not found' });
         }
-        res.render('payment', {session, tutor})
+        const stripe_public_key = process.env.STRIPE_PUBLIC_KEY;
+
+        res.render('payment', { session, tutor, stripe_public_key })
 
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
+
+
+// process transcation
+
+
+// const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
+
+// const process_transcation = async (req, res) => {
+//     try {
+//         const { amount } = req.body;
+
+//         // Create a PaymentIntent using test parameters
+//         const paymentIntent = await stripe.paymentIntents.create({
+//             amount,
+//             currency: 'usd',
+//             payment_method_types: ['card'],
+//             payment_method_data: {
+//                 type: 'card',
+//                 card: {
+//                     number: '4242424242424242', // Test card number
+//                     exp_month: 12,
+//                     exp_year: 2024,
+//                     cvc: '123'
+//                 }
+//             },
+//             confirm: true // Confirm the payment immediately
+//         });
+
+//         // Handle successful payment (update database, send confirmation email, etc.)
+//         // Redirect or respond with a success message
+//         res.send('Payment successful');
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Payment failed');
+//     }
+// }
+
+// Import necessary modules
+// Import necessary modules
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
+
+const processPayment = (req, res, next) => {
+  const { token, amount, cardholder_name, expiry_date, cvv } = req.body;
+  console.log(token);
+
+  // Create a charge using the token and form data
+  stripe.charges.create({
+    amount: amount, // Amount in cents
+    currency: 'usd', // Change to match your currency
+    source: token, 
+    description: 'Payment for tutoring session', // Customize as needed
+    statement_descriptor: 'Tutoring Session',
+    metadata: {
+      // Add any additional metadata you want to include
+    },
+  })
+  .then(charge => {
+    // Payment successful, do something (e.g., update database, send confirmation email)
+    console.log('Payment successful:', charge);
+    // Optionally, you can redirect or send a success response back to the client
+    res.status(200).json({ message: 'Payment successful' });
+  })
+  .catch(error => {
+    // Payment failed, handle error
+    console.error('Payment failed:', error);
+    // Optionally, you can redirect or send an error response back to the client
+    res.status(500).json({ message: 'Payment failed' });
+  });
+};
+
+module.exports = { processPayment };
 
 
 // //////////////////////////////////////////
@@ -262,4 +335,4 @@ const accountDelete = async (req, res, next) => {
     }
 };
 
-module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession ,updateSession, bookSession };
+module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession, updateSession, bookSession, processPayment };
