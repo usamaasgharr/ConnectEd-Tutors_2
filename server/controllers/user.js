@@ -1,6 +1,8 @@
 const User = require("../models/user");
 const fs = require('fs');
 const TutorAvailability = require('../models/TutorAvailability');
+const bookedSession = require('../models/bookedSessions')
+const TeacherStudent = require('../models/teachersAllStudents')
 
 // Get user profile
 const getProfile = async (req, res) => {
@@ -214,8 +216,8 @@ const bookSession = async (req, res, next) => {
         const { sessionId } = req.query;
 
         const session = await TutorAvailability.findById(sessionId)
-
-        const tutor = await User.findById(session.tutor._id, { profile: 1 });
+        const tutorId = session.tutor;
+        const tutor = await User.findById(tutorId, { profile: 1 });
 
 
         if (!session) {
@@ -223,7 +225,7 @@ const bookSession = async (req, res, next) => {
         }
         const stripe_public_key = process.env.STRIPE_PUBLIC_KEY;
 
-        res.render('payment', { session, tutor, stripe_public_key })
+        res.render('payment', { session, tutor, stripe_public_key, sessionId })
 
     } catch (error) {
         console.error(error);
@@ -271,36 +273,75 @@ const bookSession = async (req, res, next) => {
 // Import necessary modules
 const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 
-const processPayment = (req, res, next) => {
-  const { token, amount, cardholder_name, expiry_date, cvv } = req.body;
-  console.log(token);
+const processPayment = async (req, res, next) => {
+    try {
+        const { token, amount, cardholder_name, expiry_date, cvv, sessionId } = req.body;
+        const student = req.user.userId;
+        const { tutor } = req.body;
 
-  // Create a charge using the token and form data
-  stripe.charges.create({
-    amount: amount, // Amount in cents
-    currency: 'usd', // Change to match your currency
-    source: token, 
-    description: 'Payment for tutoring session', // Customize as needed
-    statement_descriptor: 'Tutoring Session',
-    metadata: {
-      // Add any additional metadata you want to include
-    },
-  })
-  .then(charge => {
-    // Payment successful, do something (e.g., update database, send confirmation email)
-    console.log('Payment successful:', charge);
-    // Optionally, you can redirect or send a success response back to the client
-    res.status(200).json({ message: 'Payment successful' });
-  })
-  .catch(error => {
-    // Payment failed, handle error
-    console.error('Payment failed:', error);
-    // Optionally, you can redirect or send an error response back to the client
-    res.status(500).json({ message: 'Payment failed' });
-  });
+
+        // making transcation
+// /////////////////////////////////////////////////////////////////////
+        const charge = await stripe.charges.create({
+            amount: amount * 100, // Amount in smallest currency unit (cents)
+            currency: 'pkr', // Change to match your currency
+            source: token,
+            description: 'Payment for tutoring session',
+            statement_descriptor: 'Tutoring Session',
+            metadata: {
+
+            },
+        });
+
+        console.log('Payment successful:');
+
+        // update the session status
+// /////////////////////////////////////////////////////////////////////////
+
+        const session = await TutorAvailability.findOneAndUpdate(
+            { _id: sessionId },
+            { $set: { isAvailable: false } },
+            { new: true }
+        );
+
+// ///////////////////////////////////////////////////////////////////////
+        // add session to booked sessions data
+
+        const bookedSessions = new bookedSession({
+            tutor,
+            student: req.user.userId,
+            session: sessionId
+        });
+        await bookedSessions.save();
+
+
+// ///////////////////////////////////////////////////////////////
+        // add this student to teachers "student's data"
+
+        const existingData = await TeacherStudent.findOne({ tutor });
+
+
+        if (existingData) {
+            existingData.students.push(...student); 
+            await existingData.save();
+        } else {
+            const teacherStudent = new TeacherStudent({
+                tutor,
+                students: student
+            });
+            await teacherStudent.save();
+        }
+
+
+        res.status(200).json({ message: 'Payment successful' });
+    } catch (error) {
+
+        console.error('Payment failed:', error);
+        res.status(500).json({ message: 'Payment failed' });
+    }
 };
 
-module.exports = { processPayment };
+
 
 
 // //////////////////////////////////////////

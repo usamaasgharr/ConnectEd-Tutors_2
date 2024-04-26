@@ -47,7 +47,6 @@ router.get('/book-this-session', authMiddleware , userControllers.bookSession )
 router.post('/process-payment', authMiddleware , userControllers.processPayment )
 
 
-// router.post('/session_management', authMiddleware , userControllers.edit_sessions )
 
 //see user profile page (search etc)
 router.get('/:username', userControllers.renderUserProfilePage);

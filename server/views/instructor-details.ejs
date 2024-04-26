@@ -240,7 +240,12 @@
                                             <div class="d-flex">
                                             <form class="m-1" action="/user/book-this-session" method = 'get'>
                                                 <input type="hidden" value="<%= item._id %>" name="sessionId">
-                                                <button class="btn btn-secondary" type="submit">Book This Session </button>
+
+                                                <% if(item.isAvailable == true) { %>
+                                                    <button class="btn btn-secondary" type="submit">Book This Session </button>
+                                                <% } else{ %>
+                                                    <button class="btn btn-danger text-white" disabled > Not Available</button>
+                                                <% } %>
                                             </form>
                                         </div>
                                             </div>
