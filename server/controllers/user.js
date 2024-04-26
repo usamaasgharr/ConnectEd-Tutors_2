@@ -216,6 +216,7 @@ const bookSession = async (req, res, next) => {
         const { sessionId } = req.query;
 
         const session = await TutorAvailability.findById(sessionId)
+        console.log(session);
         const tutorId = session.tutor;
         const tutor = await User.findById(tutorId, { profile: 1 });
 
@@ -225,7 +226,7 @@ const bookSession = async (req, res, next) => {
         }
         const stripe_public_key = process.env.STRIPE_PUBLIC_KEY;
 
-        res.render('payment', { session, tutor, stripe_public_key, sessionId })
+        res.render('payment', { session, tutor, stripe_public_key, sessionId, tutorId })
 
     } catch (error) {
         console.error(error);
@@ -279,9 +280,11 @@ const processPayment = async (req, res, next) => {
         const student = req.user.userId;
         const { tutor } = req.body;
 
+        console.log(tutor);
+
 
         // making transcation
-// /////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////
         const charge = await stripe.charges.create({
             amount: amount * 100, // Amount in smallest currency unit (cents)
             currency: 'pkr', // Change to match your currency
@@ -296,7 +299,7 @@ const processPayment = async (req, res, next) => {
         console.log('Payment successful:');
 
         // update the session status
-// /////////////////////////////////////////////////////////////////////////
+        // /////////////////////////////////////////////////////////////////////////
 
         const session = await TutorAvailability.findOneAndUpdate(
             { _id: sessionId },
@@ -304,7 +307,9 @@ const processPayment = async (req, res, next) => {
             { new: true }
         );
 
-// ///////////////////////////////////////////////////////////////////////
+        console.log('update successful:');
+
+        // ///////////////////////////////////////////////////////////////////////
         // add session to booked sessions data
 
         const bookedSessions = new bookedSession({
@@ -314,15 +319,16 @@ const processPayment = async (req, res, next) => {
         });
         await bookedSessions.save();
 
+        console.log('Booked successful:');
 
-// ///////////////////////////////////////////////////////////////
+        // ///////////////////////////////////////////////////////////////
         // add this student to teachers "student's data"
 
-        const existingData = await TeacherStudent.findOne({ tutor });
-
+        const existingData = await TeacherStudent.findOne({ tutor: tutor });
+        console.log(existingData);
 
         if (existingData) {
-            existingData.students.push(...student); 
+            existingData.students.push(student);
             await existingData.save();
         } else {
             const teacherStudent = new TeacherStudent({
@@ -342,6 +348,34 @@ const processPayment = async (req, res, next) => {
 };
 
 
+const allStudents = async (req, res, next) => {
+    try {
+        const tutor = req.user.userId;
+        const Sstudents = await TeacherStudent.findOne({ tutor }, {students: 1});
+        
+        const students = Sstudents.students;
+        
+
+        const studentsData = await User.find({ _id: { $in: students } }, {profile: 1, username: 1});
+        console.log(studentsData);
+
+        const user = await User.findById(req.user.userId, 'profile');
+
+        if (!user) {
+            console.log('User Not Found');
+            res.redirect('/login')
+        }
+
+        const role = req.user.role;
+
+
+        res.render('ins-students', { studentsData, user, role })
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
 
 
 // //////////////////////////////////////////
@@ -376,4 +410,4 @@ const accountDelete = async (req, res, next) => {
     }
 };
 
-module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession, updateSession, bookSession, processPayment };
+module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession, updateSession, bookSession, processPayment, allStudents };

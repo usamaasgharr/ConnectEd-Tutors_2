@@ -27,10 +27,11 @@ router.get('/delete-account', authMiddleware , userControllers.deleteAccount)
 // implementing delete-account page 
 router.get('/delete', authMiddleware , userControllers.accountDelete )
 
-// implementing delete-account page 
+// chats
 router.get('/chats', authMiddleware , userControllers.chats )
 
 // sessions management
+// ///////////////////////////////////////////////////////////////////////////
 // add sesions 
 router.get('/session_management', authMiddleware , userControllers.addSessions )
 router.post('/session_management', authMiddleware , userControllers.createSession )
@@ -45,6 +46,9 @@ router.post('/edit-session', authMiddleware , userControllers.updateSession )
 // book session
 router.get('/book-this-session', authMiddleware , userControllers.bookSession )
 router.post('/process-payment', authMiddleware , userControllers.processPayment )
+
+// all students
+router.get('/students', authMiddleware, userControllers.allStudents)
 
 
 
