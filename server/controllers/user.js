@@ -85,13 +85,35 @@ const renderUserProfilePage = async (req, res, next) => {
 const dashboard = async (req, res, next) => {
 
     const user = await User.findById(req.user.userId, 'profile');
-    const sessions = await TutorAvailability.find({ tutor: req.user.userId });
+    const role = req.user.role;
+    let sessions  = {}
+
+    if (role === 'teacher') {
+         sessions = await TutorAvailability.find({ tutor: req.user.userId });
+    } else {
+        let session = await bookedSession.find({ student: req.user.userId });
+
+         let sessionss = [];
+
+        // Use map to create an array of promises
+        const sessionPromises = session.map(async item => {
+            const sessionDetail = await TutorAvailability.findById(item.session);
+            const TutorDetails = await User.findById(item.tutor, { username: 1 });
+            return { TutorDetails, sessionDetail };
+        });
+
+        
+        const sessionResults = await Promise.all(sessionPromises);
+
+        sessions = sessionResults.map(result => ({ TutorDetails: result.TutorDetails, sessionDetail: result.sessionDetail }));
+        
+    }
     if (!user) {
         console.log('User Not Found');
         res.redirect('/login')
     }
 
-    const role = req.user.role;
+
     res.render('dashboard', { user, role, sessions });
 
 }
@@ -351,13 +373,12 @@ const processPayment = async (req, res, next) => {
 const allStudents = async (req, res, next) => {
     try {
         const tutor = req.user.userId;
-        const Sstudents = await TeacherStudent.findOne({ tutor }, {students: 1});
-        
-        const students = Sstudents.students;
-        
+        const Sstudents = await TeacherStudent.findOne({ tutor }, { students: 1 });
 
-        const studentsData = await User.find({ _id: { $in: students } }, {profile: 1, username: 1});
-        console.log(studentsData);
+        const students = Sstudents.students;
+
+
+        const studentsData = await User.find({ _id: { $in: students } }, { profile: 1, username: 1 });
 
         const user = await User.findById(req.user.userId, 'profile');
 
@@ -376,6 +397,45 @@ const allStudents = async (req, res, next) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 }
+
+const activeSessions = async (req, res, next) => {
+    try {
+        const tutor = req.user.userId;
+
+        const sessions = await bookedSession.find({ tutor });
+        let session = [];
+
+        // Use map to create an array of promises
+        const sessionPromises = sessions.map(async item => {
+            const sessionDetail = await TutorAvailability.findById(item.session);
+            const studentDetails = await User.findById(item.student, { profile: 1, username: 1 });
+            return { studentDetails, sessionDetail };
+        });
+
+        // Wait for all promises to resolve using Promise.all
+        const sessionResults = await Promise.all(sessionPromises);
+
+        // Populate session array with results
+        session = sessionResults.map(result => ({ studentDetails: result.studentDetails, sessionDetail: result.sessionDetail }));
+
+        const user = await User.findById(req.user.userId, 'profile');
+
+        if (!user) {
+            console.log('User Not Found');
+            return res.redirect('/login');
+        }
+
+        const role = req.user.role;
+
+        // res.json(session);
+        res.render('bookedSessions', { user, role, session });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+
 
 
 // //////////////////////////////////////////
@@ -410,4 +470,4 @@ const accountDelete = async (req, res, next) => {
     }
 };
 
-module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession, updateSession, bookSession, processPayment, allStudents };
+module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession, updateSession, bookSession, processPayment, allStudents, activeSessions };

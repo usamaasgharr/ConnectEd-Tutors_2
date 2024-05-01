@@ -50,6 +50,9 @@ router.post('/process-payment', authMiddleware , userControllers.processPayment 
 // all students
 router.get('/students', authMiddleware, userControllers.allStudents)
 
+// show sessions
+router.get('/active-sessions', authMiddleware, userControllers.activeSessions)
+
 
 
 //see user profile page (search etc)

@@ -70,8 +70,11 @@
                         </div>
                         <!-- Counter boxes END -->
 
-                        <h1 class="mt-5">Added Session</h1>
+                        <% if(role === 'teacher'){ %> <h1 class="mt-5">Added Session</h1><% }else{%>
+                            <h1 class="mt-5">Upcoming Session </h1>
+                        <% } %>
                         <!-- Chart START -->
+                        <% if(role === 'student'){ %>
                         <div class="row g-4 mt-2">
                             <% sessions.forEach((item)=>{%>
                                 <div class="col-sm-6 col-lg-4">
@@ -80,13 +83,15 @@
                                         
                                             <div class="ms-4">
                                                 <div class="d-flex">
-                                                    <h5>Time: <%= item.start_time %> - <%= item.end_time %>
+                                                    <h5>Time: <%= item.sessionDetail.start_time %> - <%= item.sessionDetail.end_time %>
                                                     </h5><br>
                                                 </div>
-                                                <h6>Date: <%= item.date %></h6>
-                                                <h6>Price : <%= item.price %></h6>
+                                                <h6>Date: <%= item.sessionDetail.date %></h6>
+                                                <h6>Price : <%= item.sessionDetail.price %></h6>
                                                 <span class="mb-0 h6 fw-light"></span>
                                             <div class="d-flex">
+
+                                            <% if(role === 'teacher'){ %>
                                             <form class="m-1" action="/user/edit-session" method = 'get'>
                                                 <input type="hidden" value="<%= item._id %>" name="sessionId">
                                                 <button class="btn btn-secondary" type="submit">Edit</button>
@@ -95,6 +100,9 @@
                                                 <input type="hidden" value="<%= item._id %>" name="sessionId">
                                                 <button class="btn btn-danger" type="submit">Delete</button>
                                             </form>
+                                            <% } %>
+
+                                        <h4>Tutor : <a href="/user/<%= item.TutorDetails.username %>" class="text-primary"><%= item.TutorDetails.username %> </a></h4>
                                         </div>
                                             </div>
 
@@ -104,7 +112,41 @@
                                 <% })%>
                                     <!-- Counter item -->
 
-                        </div>
+                        </div><% }else{%>
+                            <div class="row g-4 mt-2">
+                                <% sessions.forEach((item)=>{%>
+                                    <div class="col-sm-6 col-lg-4">
+                                        <div
+                                            class="d-flex justify-content-center align-items-center p-4 bg-warning bg-opacity-15 rounded-3">
+                                            
+                                                <div class="ms-4">
+                                                    <div class="d-flex">
+                                                        <h5>Time: <%= item.start_time %> - <%= item.end_time %>
+                                                        </h5><br>
+                                                    </div>
+                                                    <h6>Date: <%= item.date %></h6>
+                                                    <h6>Price : <%= item.price %></h6>
+                                                    <span class="mb-0 h6 fw-light"></span>
+                                                <div class="d-flex">
+                                                <form class="m-1" action="/user/edit-session" method = 'get'>
+                                                    <input type="hidden" value="<%= item._id %>" name="sessionId">
+                                                    <button class="btn btn-secondary" type="submit">Edit</button>
+                                                </form>
+                                                <form class="m-1" action="/user/delete-session" method = 'post'>
+                                                    <input type="hidden" value="<%= item._id %>" name="sessionId">
+                                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                                </form>
+                                            </div>
+                                                </div>
+    
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <% })%>
+                                        <!-- Counter item -->
+    
+                            </div>
+                        <% } %>
 
 
 
