@@ -54,6 +54,12 @@ router.get('/students', authMiddleware, userControllers.allStudents)
 router.get('/active-sessions', authMiddleware, userControllers.activeSessions)
 
 
+// ////////////reviews
+// get all reviews
+router.get('/instructor-reviews', authMiddleware, userControllers.insReviews)
+// add review get/post
+router.get('/tutor-review', authMiddleware, userControllers.add_review)
+router.get('/tutor-review', authMiddleware, userControllers.post_review)
 
 //see user profile page (search etc)
 router.get('/:username', userControllers.renderUserProfilePage);

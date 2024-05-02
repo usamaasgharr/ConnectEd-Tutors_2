@@ -134,8 +134,13 @@
                                                 </form>
                                                 <form class="m-1" action="/user/delete-session" method = 'post'>
                                                     <input type="hidden" value="<%= item._id %>" name="sessionId">
-                                                    <button class="btn btn-danger" type="submit">Delete</button>
+                                                    <% if(item.isAvailable === false){ %>
+                                                        <button class="btn btn-danger" type="submit" disabled>Already Booked</button>
+                                                    <% }else{ %> 
+                                                        <button class="btn btn-danger" type="submit">Delete</button>
+                                                    <% } %>
                                                 </form>
+                                                
                                             </div>
                                                 </div>
     

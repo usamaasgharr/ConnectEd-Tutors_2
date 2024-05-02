@@ -86,14 +86,14 @@ const dashboard = async (req, res, next) => {
 
     const user = await User.findById(req.user.userId, 'profile');
     const role = req.user.role;
-    let sessions  = {}
+    let sessions = {}
 
     if (role === 'teacher') {
-         sessions = await TutorAvailability.find({ tutor: req.user.userId });
+        sessions = await TutorAvailability.find({ tutor: req.user.userId });
     } else {
         let session = await bookedSession.find({ student: req.user.userId });
 
-         let sessionss = [];
+        let sessionss = [];
 
         // Use map to create an array of promises
         const sessionPromises = session.map(async item => {
@@ -102,11 +102,11 @@ const dashboard = async (req, res, next) => {
             return { TutorDetails, sessionDetail };
         });
 
-        
+
         const sessionResults = await Promise.all(sessionPromises);
 
         sessions = sessionResults.map(result => ({ TutorDetails: result.TutorDetails, sessionDetail: result.sessionDetail }));
-        
+
     }
     if (!user) {
         console.log('User Not Found');
@@ -436,9 +436,39 @@ const activeSessions = async (req, res, next) => {
     }
 }
 
+// //////////////////////////////////////////  reviews
+
+const insReviews = async (req, res) => {
+    
+    const user = await User.findById(req.user.userId, 'profile');
+
+    if (!user) {
+        console.log('User Not Found');
+        res.redirect('/login')
+    }
+
+    const role = req.user.role
+    res.render('instructor-reviews', {user, role});
+}
 
 
-// //////////////////////////////////////////
+const add_review = async (req, res)=>{
+    
+    const user = await User.findById(req.user.userId, 'profile');
+
+    if (!user) {
+        console.log('User Not Found');
+        res.redirect('/login')
+    }
+
+    const role = req.user.role
+    res.render('add-review', {user, role});
+}
+
+const post_review = async (req, res)=>{
+    
+}
+
 
 // deleteAccount
 const deleteAccount = async (req, res, next) => {
@@ -470,4 +500,4 @@ const accountDelete = async (req, res, next) => {
     }
 };
 
-module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession, updateSession, bookSession, processPayment, allStudents, activeSessions };
+module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession, updateSession, bookSession, processPayment, allStudents, activeSessions, insReviews, add_review, post_review };
