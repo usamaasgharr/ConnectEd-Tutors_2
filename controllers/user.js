@@ -449,6 +449,28 @@ const activeSessions = async (req, res, next) => {
 
 const insReviews = async (req, res) => {
 
+    const reviews = await Review.find({ tutor: req.user.userId });
+
+
+    if(!reviews){
+       reviews = [];
+    }
+
+    let review = [];
+
+        // Use map to create an array of promises
+        const reviewPromises = reviews.map(async item => {
+            const studentDetails = await User.findById(item.student, { profile: 1, username: 1 });
+            return { studentDetails, item };
+        });
+
+        // Wait for all promises to resolve using Promise.all
+        const reviewResults = await Promise.all(reviewPromises);
+
+        // Populate session array with results
+        review = reviewResults.map(result => ({ studentDetails: result.studentDetails, Review: result.item }));
+    
+    
     const user = await User.findById(req.user.userId, 'profile');
 
 
@@ -459,7 +481,7 @@ const insReviews = async (req, res) => {
     }
 
     const role = req.user.role
-    res.render('instructor-reviews', { user, role });
+    res.render('instructor-reviews', { user, role, review });
 }
 
 
