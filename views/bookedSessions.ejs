@@ -1,0 +1,116 @@
+<%- include('./includes/head.ejs') %>
+
+    </head>
+
+    <body>
+
+        <!-- Header START -->
+        <%- include('./includes/navigation.ejs') %>
+            <!-- Header END -->
+
+            <!-- **************** MAIN CONTENT START **************** -->
+            <main>
+
+                <!-- =======================
+    Page Banner START -->
+                <%- include('./includes/main.ejs')%>
+                    <!-- Right sidebar END -->
+                    <!-- Main content START -->
+                    <div class="col-xl-9">
+                        <!-- Card START -->
+                        <div class="card border rounded-3">
+                            <!-- Card header START -->
+                            <div class="card-header border-bottom">
+                                <h3 class="mb-0">My Upcoming Sessions List</h3>
+                            </div>
+                            <!-- Card header END -->
+                            
+                            <!-- Card body START -->
+                            <div class="card-body">
+
+
+                                <!-- Student list table START -->
+                                <div class="table-responsive border-0">
+                                    <table class="table table-dark-gray align-middle p-4 mb-0 table-hover">
+                                        <!-- Table head -->
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="border-0 rounded-start">Student name</th>
+                                                <th scope="col" class="border-0">Date</th>
+                                                <th scope="col" class="border-0">Time</th>
+                                                <th scope="col" class="border-0">Price</th>
+                                                <th scope="col" class="border-0 rounded-end"></th>
+                                            </tr>
+                                        </thead>
+
+
+                                        <!-- Table body START -->
+                                        <tbody>
+                                            
+
+                                            <!-- Table item -->
+                                            <% session.forEach(sessions=>{ %>
+                                                <tr>
+                                                    <td>
+                                                        <div class="d-flex align-items-center position-relative">
+                                                            <!-- Image -->
+                                                            <div class="avatar avatar-md mb-2 mb-md-0">
+                                                                <img src="/uploads/<%= sessions.studentDetails.profile.profilePicture %>" class="rounded" alt="">
+                                                            </div>
+                                                            <div class="mb-0 ms-2">
+                                                                <!-- Title -->
+                                                                <h6 class="mb-0"><a href="/user/<%= sessions.studentDetails.username %>" class="stretched-link"><%= sessions.studentDetails.profile.firstName%> <%= sessions.studentDetails.profile.firstName%></a></h6>
+                                                                <!-- Address -->
+                                                                <span class="text-body small"><i class="fas fa-fw fa-map-marker-alt me-1 mt-1"></i><%= sessions.studentDetails.profile.location.city%>, <%= sessions.studentDetails.profile.location.country%> </span>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    <td class="text-center text-sm-start">
+                                                        <div class=" overflow-hidden">
+                                                            <h6 class="mb-0"><%= sessions.sessionDetail.date %></h6>
+                                                        </div>
+                                                    </td>
+            
+                                                    <!-- Table data -->
+                                                    <td><%= sessions.sessionDetail.start_time %> - <%= sessions.sessionDetail.end_time %></td>
+            
+                                                    <!-- Table data -->
+                                                    <td><%= sessions.sessionDetail.price %></td>
+            
+                                                    <!-- Table data -->
+                                                    <td>
+                                                        <button class="btn btn-danger-soft btn-round mb-0">Start Session</button>
+                                                    </td>
+
+                                                    <!-- Table data -->
+                                                  
+                                                </tr>
+                                            <% }) %>
+
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <!-- Card body START -->
+                        </div>
+                        <!-- Card END -->
+                    </div>
+                    <!-- Main content END -->
+
+            </main>
+
+            <%- include('./includes/footer') -%>
+                <!-- ======================= Footer END -->
+
+                <!-- Back to top -->
+                <div class="back-top"><i
+                        class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
+
+                <!-- Bootstrap JS -->
+                <script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    </body>
+
+    </html>
