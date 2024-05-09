@@ -59,9 +59,7 @@ const updateProfile = async (req, res) => {
 
 // render user profile
 const renderUserProfilePage = async (req, res, next) => {
-
     const username = req.params.username;
-
 
     try {
         const user = await User.findOne({ username: username });
@@ -70,6 +68,31 @@ const renderUserProfilePage = async (req, res, next) => {
             return res.status(404).send('User not found');
         }
 
+        const reviews = await Review.find({ tutor: user._id  });
+
+
+        if (!reviews) {
+            reviews = [];
+        }
+
+        let review = [];
+
+        // Use map to create an array of promises
+        const reviewPromises = reviews.map(async item => {
+            const studentDetails = await User.findById(item.student, { profile: 1, username: 1 });
+            return { studentDetails, item };
+        });
+
+        // Wait for all promises to resolve using Promise.all
+        const reviewResults = await Promise.all(reviewPromises);
+
+        // Populate session array with results
+        review = reviewResults.map(result => ({ studentDetails: result.studentDetails, Review: result.item }));
+
+
+
+
+
         const sessions = await TutorAvailability.find({ tutor: user._id });
 
         if (!sessions) {
@@ -77,7 +100,7 @@ const renderUserProfilePage = async (req, res, next) => {
         }
 
         // Render the user profile page with the retrieved user data
-        res.render('instructor-details', { user, sessions });
+        res.render('instructor-details', { user, sessions, review });
     } catch (err) {
         console.error('Error fetching user data:', err);
         res.status(500).send('Internal server error');
@@ -452,25 +475,25 @@ const insReviews = async (req, res) => {
     const reviews = await Review.find({ tutor: req.user.userId });
 
 
-    if(!reviews){
-       reviews = [];
+    if (!reviews) {
+        reviews = [];
     }
 
     let review = [];
 
-        // Use map to create an array of promises
-        const reviewPromises = reviews.map(async item => {
-            const studentDetails = await User.findById(item.student, { profile: 1, username: 1 });
-            return { studentDetails, item };
-        });
+    // Use map to create an array of promises
+    const reviewPromises = reviews.map(async item => {
+        const studentDetails = await User.findById(item.student, { profile: 1, username: 1 });
+        return { studentDetails, item };
+    });
 
-        // Wait for all promises to resolve using Promise.all
-        const reviewResults = await Promise.all(reviewPromises);
+    // Wait for all promises to resolve using Promise.all
+    const reviewResults = await Promise.all(reviewPromises);
 
-        // Populate session array with results
-        review = reviewResults.map(result => ({ studentDetails: result.studentDetails, Review: result.item }));
-    
-    
+    // Populate session array with results
+    review = reviewResults.map(result => ({ studentDetails: result.studentDetails, Review: result.item }));
+
+
     const user = await User.findById(req.user.userId, 'profile');
 
 
