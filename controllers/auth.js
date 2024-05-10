@@ -166,8 +166,9 @@ const Adminlogin = async (req, res) => {
         }
         const token = jwt.sign({ userId: admin._id, email: admin.email, role: admin.role }, 'your-secret-key', { expiresIn: '12000hr' });
 
-
-        res.status(200).json({ token });
+        
+        res.cookie('token', token, { httpOnly: true });
+        res.render('admin/adminPanel')
 
 
     } catch (error) {

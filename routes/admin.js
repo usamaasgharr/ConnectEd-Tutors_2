@@ -6,6 +6,7 @@ const adminMiddleware = require('../middleware/adminMiddleware')
 const router = express.Router();
 // need to add admin auth middleware
 
+
 // login admin Routes
 router.post('/add-new',adminMiddleware ,adminController.addNewAdmin)
 
@@ -19,6 +20,7 @@ router.get('/search-user', adminMiddleware ,adminController.searchUser);
 router.put('/toggle-user-status/:username', adminMiddleware ,adminController.toggleUserStatus);
 
 
+router.get('/', adminController.AdminloginView);
 // Login for admin
 router.post('/', authControllers.Adminlogin);
 

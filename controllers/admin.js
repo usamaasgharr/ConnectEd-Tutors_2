@@ -4,6 +4,10 @@ const User = require('../models/user')
 
 const bcrypt = require('bcryptjs')
 
+// tutor profile approval
+// Contact us
+// application Feedback
+
 
 const addNewAdmin = async (req, res) => {
 
@@ -110,5 +114,12 @@ const toggleUserStatus = async (req, res) => {
 };
 
 
+const AdminloginView = async (req, res) => {
+    res.render('admin/login')
+        
+};
 
-module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus }
+
+
+
+module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus, AdminloginView }
