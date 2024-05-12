@@ -149,6 +149,10 @@ const login = async (req, res) => {
             return res.render('sign-in', { errorMessage: "Invalid Crediantials " });
         }
 
+        if(user.isActive === null){
+            return res.render('sign-in', { errorMessage: "Invalid Crediantials " });
+        }
+        
         if (!user.isActive) {
             return res.render('sign-in', { errorMessage: 'Your Account has been Deactivated. Kindly Contact Us through Contact us form for more Information.' })
         }

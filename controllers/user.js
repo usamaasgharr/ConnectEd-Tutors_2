@@ -570,6 +570,7 @@ const post_review = async (req, res) => {
 // deleteAccount
 const deleteAccount = async (req, res, next) => {
     const user = await User.findById(req.user.userId, 'profile');
+    
 
     if (!user) {
         console.log('User Not Found');
@@ -583,8 +584,10 @@ const deleteAccount = async (req, res, next) => {
 const accountDelete = async (req, res, next) => {
     try {
         // Assuming req.user.userId contains the ID of the user to be deleted
-        const deletedUser = await User.findByIdAndDelete(req.user.userId);
+        const deletedUser = await User.findByIdAndUpdate(req.user.userId, {isActive: null});
 
+        // const deletedUser = await User.findByIdAndDelete(req.user.userId);
+        
         if (!deletedUser) {
             return res.status(404).json({ message: 'User not found' });
         }

@@ -27,10 +27,10 @@ const getSearchResult = async (req, res, next) => {
             { 'profile.subjects': { $regex: new RegExp(search_query, 'i') } }
         ];
     }
-    
+
 
     // Add country filter if country is specified
-    if (country && country !== 'all' ) {
+    if (country && country !== 'all') {
         query["profile.location.country"] = { $regex: new RegExp(country, 'i') };
     }
 
@@ -39,27 +39,28 @@ const getSearchResult = async (req, res, next) => {
         query["profile.location.city"] = { $regex: new RegExp(city, 'i') };
     }
 
+    query["isActive"] = true;
     // Execute the query using your MongoDB driver
     try {
         const data = await User.find(query, { profile: 1, username: 1, email: 1 });
-        const profiles = await User.find({},{ profile: 1});
+        const profiles = await User.find({}, { profile: 1 });
         const subjects = [];
-        profiles.forEach(item=> {
-            item.profile.subjects.forEach(subject =>{
-                if (!subjects.includes(subject)){
+        profiles.forEach(item => {
+            item.profile.subjects.forEach(subject => {
+                if (!subjects.includes(subject)) {
                     subjects.push(subject)
                 }
             })
         })
 
         const countrys = [];
-        profiles.forEach(item=> {
-                if (!countrys.includes(item.profile.location.country)){
-                    countrys.push(item.profile.location.country)
-                }
+        profiles.forEach(item => {
+            if (!countrys.includes(item.profile.location.country)) {
+                countrys.push(item.profile.location.country)
+            }
         })
 
-        res.render('instructors-list', {data, subjects, countrys})
+        res.render('instructors-list', { data, subjects, countrys })
 
     } catch (err) {
         console.error('Error fetching data from MongoDB:', err);
