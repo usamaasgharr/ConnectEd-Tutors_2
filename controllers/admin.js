@@ -4,10 +4,11 @@ const User = require('../models/user')
 
 const bcrypt = require('bcryptjs')
 
-// tutor profile approval
-// Contact us
-// application Feedback
 
+
+const addNewAdmin_View = async (req, res) => {
+    res.render('admin/add-new-admin', { errorMessage: '' })
+}
 
 const addNewAdmin = async (req, res) => {
 
@@ -17,13 +18,13 @@ const addNewAdmin = async (req, res) => {
 
         const existingUsername = await Admin.findOne({ username });
         if (existingUsername) {
-            return res.status(400).json({ message: 'User with this username already exists' });
+            return res.status(400).render('admin/add-new-admin', { errorMessage: 'User with This username Already Exixt' });
         }
 
 
         const existingEmail = await Admin.findOne({ email });
         if (existingEmail) {
-            return res.status(400).json({ message: 'User with this email already exists' });
+            return res.status(400).render('admin/add-new-admin', { errorMessage: 'User with This Email Already Exixt' });
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -38,7 +39,7 @@ const addNewAdmin = async (req, res) => {
         // Save user to database
         await admin.save();
 
-        res.status(201).json({ message: 'User registered successfully' });
+        return res.status(201).render('admin/add-new-admin', { errorMessage: 'User Registered Sucessfully' });
 
     } catch (error) {
         console.error(error);
@@ -47,20 +48,22 @@ const addNewAdmin = async (req, res) => {
 };
 
 
+const deleteUserAccount_View = async (req, res) => {
+    res.render('admin/delete-user-account', { errorMessage: '' })
+}
 
 
 const deleteUserAccount = async (req, res) => {
     try {
-        const { username } = req.params;
-
-        const user = await User.findOneAndDelete({username});
+        const { username } = req.body;
+        const user = await User.findOneAndDelete({ username });
 
         // If the user with the given userId does not exist, return an error
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).render('admin/delete-user-account', { errorMessage: 'No user exixt With this username' })
         }
 
-        res.status(200).json({ message: 'User account deleted successfully' });
+        return res.status(404).render('admin/delete-user-account', { errorMessage: 'Account Deleted Sucessfully' })
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
@@ -91,22 +94,31 @@ const searchUser = async (req, res) => {
 };
 
 // activate or deactivate user Account
+const toggleUserStatus_View = async (req, res) => {
+    res.render('admin/toggle-status', { errorMessage: "" })
+}
+
+
 const toggleUserStatus = async (req, res) => {
     try {
-        const { username } = req.params;
-        const { active } = req.body; 
+        const { username, active } = req.body;
 
-        const user = await User.findOne({username});
+        console.log(active);
 
-        
+        const user = await User.findOne({ username });
+
+
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).render('admin/toggle-status',{ errorMessage: 'User not found' });
         }
+        
         user.isActive = active;
 
         await user.save();
 
-        res.status(200).json({ message: `User account ${active ? 'activated' : 'deactivated'} successfully` });
+        res.status(201).render('admin/toggle-status', {
+            errorMessage: `Account Status Toggled Successfully`
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
@@ -114,12 +126,16 @@ const toggleUserStatus = async (req, res) => {
 };
 
 
-const AdminloginView = async (req, res) => {
-    res.render('admin/login')
-        
+const AdminloginPage = async (req, res) => {
+    res.render('admin/login', { errorMessage: null })
+};
+
+const dashboard = async (req, res) => {
+    res.render('admin/adminPanel')
+
 };
 
 
 
 
-module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus, AdminloginView }
+module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus, AdminloginPage, dashboard, addNewAdmin_View, deleteUserAccount_View, toggleUserStatus_View }

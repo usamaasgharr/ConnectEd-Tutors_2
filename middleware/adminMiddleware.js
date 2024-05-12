@@ -3,29 +3,23 @@ const adminSchema = require('../models/admin');
 
 const adminMiddleware = async (req, res, next) => {
 
-  const token = req.headers.authorization;
-
+  const token = req.cookies.token;
   if (!token) {
-    return res.status(401).json({ message: 'Authentication token is missing' });
-  }
+    return res.redirect('/admin');
+}
 
   try {
-    
-    const decodedToken = jwt.verify(token, 'your-secret-key'); 
+    // Verify and decode the token
+    const decodedToken = jwt.verify(token, 'your-secret-key');
 
+    // Attach the user ID to the request for use in controllers
+    req.user = { userId: decodedToken.userId, role: decodedToken.role };
     
-    const admin = await adminSchema.findById(decodedToken.userId);
-
-    
-    if (!admin || admin.role !== 'admin') {
-      return res.status(403).json({ message: 'Access denied: User is not an admin' });
-    }
 
     next();
-
   } catch (error) {
-    console.error('Error verifying token:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error('Error verifying token:', err);
+    res.redirect('/login');
   }
 };
 
