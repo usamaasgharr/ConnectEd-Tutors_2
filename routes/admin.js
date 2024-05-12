@@ -8,6 +8,7 @@ const router = express.Router();
 
 
 
+
 // login admin Routes
 router.get('/add-new',adminMiddleware ,adminController.addNewAdmin_View)
 router.post('/add-new',adminMiddleware ,adminController.addNewAdmin)
@@ -28,6 +29,11 @@ router.post('/toggle-user-status', adminMiddleware ,adminController.toggleUserSt
 router.get('/dashboard', adminMiddleware , adminController.dashboard)
 
 router.get('/signout', authControllers.adminSignout)
+
+// requests
+router.get('/all-requests',adminMiddleware ,adminController.allRequests)
+router.get('/request/:username',adminMiddleware ,adminController.request_View)
+router.post('/request/:username',adminMiddleware ,adminController.req_status)
 
 router.get('/', adminController.AdminloginPage);
 // Login for admin

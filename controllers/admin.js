@@ -1,7 +1,7 @@
 
 const Admin = require('../models/admin')
 const User = require('../models/user')
-
+const Requests = require('../models/accountRequests')
 const bcrypt = require('bcryptjs')
 
 
@@ -109,9 +109,9 @@ const toggleUserStatus = async (req, res) => {
 
 
         if (!user) {
-            return res.status(404).render('admin/toggle-status',{ errorMessage: 'User not found' });
+            return res.status(404).render('admin/toggle-status', { errorMessage: 'User not found' });
         }
-        
+
         user.isActive = active;
 
         await user.save();
@@ -126,6 +126,86 @@ const toggleUserStatus = async (req, res) => {
 };
 
 
+// requests
+
+const allRequests = async (req, res) => {
+    try {
+        let requests = await Requests.find();
+
+        if(!requests){
+            requests = [];
+        }
+        res.render('admin/requests', { requests })
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+const request_View = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const request = await Requests.findOne({ username });
+
+
+        res.render('admin/singleRequest', { errorMessage: "", request })
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+const req_status = async (req, res) => {
+    try {
+        const { username } = req.params;
+        const {action}= req.body;
+        if(action ==='approve'){
+        
+        const request = await Requests.findOne({ username });
+
+
+        const user = new User({
+            isActive: true,
+            username: request.username,
+            email :request.email,
+            password: request.password,
+            role : request.role,
+            profile: {
+                firstName : request.profile.firstName,
+                lastName: request.profile.lastName,
+                education: request.profile.education,
+                bio: request.profile.bio,
+                subjects: request.profile.subjects,
+                location: { country: request.profile.location.country, city: request.profile.location.city },
+                title: request.profile.title,
+                profilePicture: request.profile.profilePicture
+            }
+        });
+
+        await user.save();
+
+        await Requests.findOneAndDelete({username})
+    }else{
+        await Requests.findOneAndDelete({username})
+    }
+
+        res.redirect('/admin/all-requests')
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+
+
+
+
+// /////////////////////////////////////////////////////////
 const AdminloginPage = async (req, res) => {
     res.render('admin/login', { errorMessage: null })
 };
@@ -138,4 +218,4 @@ const dashboard = async (req, res) => {
 
 
 
-module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus, AdminloginPage, dashboard, addNewAdmin_View, deleteUserAccount_View, toggleUserStatus_View }
+module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus, AdminloginPage, dashboard, addNewAdmin_View, deleteUserAccount_View, toggleUserStatus_View, allRequests, request_View , req_status}
