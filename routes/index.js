@@ -21,6 +21,7 @@ router.use('/user', userRoutes);        // user route for updating and see infor
 router.get('/about', indexRoutes.aboutRoute);
 
 router.get('/contact', indexRoutes.contactRoute);
+router.post('/contact-us', indexRoutes.contactform);
 
 
 router.use('/', authRoutes);         // login signup

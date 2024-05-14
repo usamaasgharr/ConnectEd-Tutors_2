@@ -1,6 +1,7 @@
 
 
 const User = require("../models/user");
+const userQuerie = require('../models/queries')
 
 
 const getUserProfile = async (req, res) => {
@@ -21,14 +22,37 @@ const getUserProfile = async (req, res) => {
 
 
 // contact Route
-const aboutRoute = (req, res) =>{
+const aboutRoute = (req, res) => {
     res.render('about');
 }
 
 
 // contact Route
-const contactRoute = (req, res) =>{
-    res.render('contact-us');
+const contactRoute = (req, res) => {
+    res.render('contact-us', { message: "" });
 }
 
-module.exports = {getUserProfile, aboutRoute, contactRoute};
+// 
+const contactform = async (req, res) => {
+    try {
+        const { name, email, message } = req.body;
+
+        const newQuery = new userQuerie({
+            name,
+            email,
+            message,
+        });
+
+        // Save the new session to the database
+        await newQuery.save();
+
+
+        res.render('contact-us', { message: "Form Submitted." })
+    } catch (error) {
+        console.error("Error submitting contact form:", error);
+        res.status(500).json({ message: "Internal server error." });
+    }
+
+}
+
+module.exports = { getUserProfile, aboutRoute, contactRoute, contactform };

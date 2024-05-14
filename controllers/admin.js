@@ -3,6 +3,7 @@ const Admin = require('../models/admin')
 const User = require('../models/user')
 const Requests = require('../models/accountRequests')
 const bcrypt = require('bcryptjs')
+const userQuerie = require('../models/queries')
 
 
 
@@ -132,7 +133,7 @@ const allRequests = async (req, res) => {
     try {
         let requests = await Requests.find();
 
-        if(!requests){
+        if (!requests) {
             requests = [];
         }
         res.render('admin/requests', { requests })
@@ -162,36 +163,36 @@ const request_View = async (req, res) => {
 const req_status = async (req, res) => {
     try {
         const { username } = req.params;
-        const {action}= req.body;
-        if(action ==='approve'){
-        
-        const request = await Requests.findOne({ username });
+        const { action } = req.body;
+        if (action === 'approve') {
+
+            const request = await Requests.findOne({ username });
 
 
-        const user = new User({
-            isActive: true,
-            username: request.username,
-            email :request.email,
-            password: request.password,
-            role : request.role,
-            profile: {
-                firstName : request.profile.firstName,
-                lastName: request.profile.lastName,
-                education: request.profile.education,
-                bio: request.profile.bio,
-                subjects: request.profile.subjects,
-                location: { country: request.profile.location.country, city: request.profile.location.city },
-                title: request.profile.title,
-                profilePicture: request.profile.profilePicture
-            }
-        });
+            const user = new User({
+                isActive: true,
+                username: request.username,
+                email: request.email,
+                password: request.password,
+                role: request.role,
+                profile: {
+                    firstName: request.profile.firstName,
+                    lastName: request.profile.lastName,
+                    education: request.profile.education,
+                    bio: request.profile.bio,
+                    subjects: request.profile.subjects,
+                    location: { country: request.profile.location.country, city: request.profile.location.city },
+                    title: request.profile.title,
+                    profilePicture: request.profile.profilePicture
+                }
+            });
 
-        await user.save();
+            await user.save();
 
-        await Requests.findOneAndDelete({username})
-    }else{
-        await Requests.findOneAndDelete({username})
-    }
+            await Requests.findOneAndDelete({ username })
+        } else {
+            await Requests.findOneAndDelete({ username })
+        }
 
         res.redirect('/admin/all-requests')
 
@@ -202,7 +203,14 @@ const req_status = async (req, res) => {
 };
 
 
+// user queries
 
+
+const view_queries = async (req, res) => {
+    const queries = await userQuerie.find();
+
+    res.render('admin/userQueries', { queries })
+};
 
 
 // /////////////////////////////////////////////////////////
@@ -218,4 +226,4 @@ const dashboard = async (req, res) => {
 
 
 
-module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus, AdminloginPage, dashboard, addNewAdmin_View, deleteUserAccount_View, toggleUserStatus_View, allRequests, request_View , req_status}
+module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus, AdminloginPage, dashboard, addNewAdmin_View, deleteUserAccount_View, toggleUserStatus_View, allRequests, request_View, req_status, view_queries }

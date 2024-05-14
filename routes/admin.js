@@ -13,6 +13,9 @@ const router = express.Router();
 router.get('/add-new',adminMiddleware ,adminController.addNewAdmin_View)
 router.post('/add-new',adminMiddleware ,adminController.addNewAdmin)
 
+// user Queries
+router.get('/user-queries',adminMiddleware ,adminController.view_queries)
+
 
 // Route for deleting a user account by admin
 router.get('/delete-user', adminMiddleware ,adminController.deleteUserAccount_View);

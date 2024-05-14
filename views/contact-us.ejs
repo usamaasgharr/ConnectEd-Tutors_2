@@ -127,28 +127,30 @@
                 <!-- Contact form START -->
                 <div class="col-md-6">
                     <!-- Title -->
+                    <% if (message) { %> <h3 class="text-success"><%= message %></h3> <% } %>
                     <h2 class="mt-4 mt-md-0">Let's talk</h2>
                     <p>To request a quote or want to meet up for coffee, contact us directly or fill out the form and we will get back to you promptly</p>
                         
-                    <form>
+
+                    <form action="/contact-us" method="post">
                         <!-- Name -->
                         <div class="mb-4 bg-light-input">
                             <label for="yourName" class="form-label">Your name *</label>
-                            <input type="text" class="form-control form-control-lg" id="yourName">
+                            <input type="text" class="form-control form-control-lg" id="yourName" name="name" required>
                         </div>
                         <!-- Email -->
                         <div class="mb-4 bg-light-input">
                             <label for="emailInput" class="form-label">Email address *</label>
-                            <input type="email" class="form-control form-control-lg" id="emailInput">
+                            <input type="email" class="form-control form-control-lg" id="emailInput" name="email" required>
                         </div>
                         <!-- Message -->
                         <div class="mb-4 bg-light-input">
                             <label for="textareaBox" class="form-label">Message *</label>
-                            <textarea class="form-control" id="textareaBox" rows="4"></textarea>
+                            <textarea class="form-control" id="textareaBox" rows="4"  name="message" required></textarea>
                         </div>
                         <!-- Button -->
                         <div class="d-grid">
-                            <button class="btn btn-lg btn-primary mb-0" type="button">Send Message</button>
+                            <button class="btn btn-lg btn-primary mb-0" type="Submit">Send Message</button>
                         </div>	
                     </form>
                 </div>
