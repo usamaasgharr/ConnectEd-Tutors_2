@@ -68,7 +68,7 @@ const renderUserProfilePage = async (req, res, next) => {
             return res.status(404).send('User not found');
         }
 
-        const reviews = await Review.find({ tutor: user._id  });
+        const reviews = await Review.find({ tutor: user._id });
 
 
         if (!reviews) {
@@ -139,8 +139,19 @@ const dashboard = async (req, res, next) => {
         res.redirect('/login')
     }
 
+    const currentDate = new Date().getDate();
+    const currentHour = new Date().getHours();
+    const currentMonth = new Date().getMonth() + 1;
+    const currentMinute = new Date().getMinutes();
 
-    res.render('dashboard', { user, role, sessions });
+    console.log(currentMonth, currentDate, currentHour, currentMinute)
+    // console.log(currentHour > Number(sessions[0].end_time.split('')[0]));
+    // console.log(typeof(Number(sessions[0].end_time[0] + sessions[0].end_time[1] )))
+
+    console.log(sessions[4].isAvailable === false || (currentHour < Number(sessions[4].end_time[0] + sessions[4].end_time[1] ) && sessions[4].date <= currentDate))
+
+    res.render('dashboard', { user, role, sessions, currentHour, currentMinute, currentDate  });
+
 
 }
 
@@ -273,7 +284,7 @@ const bookSession = async (req, res, next) => {
         }
         const stripe_public_key = process.env.STRIPE_PUBLIC_KEY;
 
-        res.render('payment', { session, tutor, stripe_public_key, sessionId, tutorId , message: ""})
+        res.render('payment', { session, tutor, stripe_public_key, sessionId, tutorId, message: "" })
 
     } catch (error) {
         console.error(error);
@@ -382,11 +393,11 @@ const processPayment = async (req, res, next) => {
             await teacherStudent.save();
         }
 
-        res.render('payment-status', {message: "Payment Sucessfull. Session Booked"});
+        res.render('payment-status', { message: "Payment Sucessfull. Session Booked" });
     } catch (error) {
 
         console.error('Payment failed:', error);
-        res.render('payment-status', {message: "Payment Failed."});
+        res.render('payment-status', { message: "Payment Failed." });
     }
 };
 
@@ -567,7 +578,7 @@ const post_review = async (req, res) => {
 // deleteAccount
 const deleteAccount = async (req, res, next) => {
     const user = await User.findById(req.user.userId, 'profile');
-    
+
 
     if (!user) {
         console.log('User Not Found');
@@ -581,10 +592,10 @@ const deleteAccount = async (req, res, next) => {
 const accountDelete = async (req, res, next) => {
     try {
         // Assuming req.user.userId contains the ID of the user to be deleted
-        const deletedUser = await User.findByIdAndUpdate(req.user.userId, {isActive: null});
+        const deletedUser = await User.findByIdAndUpdate(req.user.userId, { isActive: null });
 
         // const deletedUser = await User.findByIdAndDelete(req.user.userId);
-        
+
         if (!deletedUser) {
             return res.status(404).json({ message: 'User not found' });
         }
