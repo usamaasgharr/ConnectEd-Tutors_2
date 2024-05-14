@@ -264,7 +264,6 @@ const bookSession = async (req, res, next) => {
         const { sessionId } = req.query;
 
         const session = await TutorAvailability.findById(sessionId)
-        console.log(session);
         const tutorId = session.tutor;
         const tutor = await User.findById(tutorId, { profile: 1 });
 
@@ -274,7 +273,7 @@ const bookSession = async (req, res, next) => {
         }
         const stripe_public_key = process.env.STRIPE_PUBLIC_KEY;
 
-        res.render('payment', { session, tutor, stripe_public_key, sessionId, tutorId })
+        res.render('payment', { session, tutor, stripe_public_key, sessionId, tutorId , message: ""})
 
     } catch (error) {
         console.error(error);
@@ -328,14 +327,12 @@ const processPayment = async (req, res, next) => {
         const student = req.user.userId;
         const { tutor } = req.body;
 
-        console.log(tutor);
-
 
         // making transcation
         // /////////////////////////////////////////////////////////////////////
         const charge = await stripe.charges.create({
-            amount: amount * 100, // Amount in smallest currency unit (cents)
-            currency: 'pkr', // Change to match your currency
+            amount: amount * 100,
+            currency: 'pkr',
             source: token,
             description: 'Payment for tutoring session',
             statement_descriptor: 'Tutoring Session',
@@ -373,7 +370,6 @@ const processPayment = async (req, res, next) => {
         // add this student to teachers "student's data"
 
         const existingData = await TeacherStudent.findOne({ tutor: tutor });
-        console.log(existingData);
 
         if (existingData) {
             existingData.students.push(student);
@@ -386,16 +382,17 @@ const processPayment = async (req, res, next) => {
             await teacherStudent.save();
         }
 
-
-        res.status(200).json({ message: 'Payment successful' });
+        res.render('payment-status', {message: "Payment Sucessfull. Session Booked"});
     } catch (error) {
 
         console.error('Payment failed:', error);
-        res.status(500).json({ message: 'Payment failed' });
+        res.render('payment-status', {message: "Payment Failed."});
     }
 };
 
 
+
+// /////////////////////////////////
 const allStudents = async (req, res, next) => {
     try {
         const tutor = req.user.userId;

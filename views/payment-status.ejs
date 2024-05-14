@@ -1,0 +1,52 @@
+<%- include('./includes/head.ejs') %>
+
+<link rel="stylesheet" type="text/css" href="assets/vendor/glightbox/css/glightbox.css">
+<link rel="stylesheet" type="text/css" href="assets/vendor/tiny-slider/tiny-slider.css">
+
+</head>
+
+<body>
+
+<!-- Header START -->
+<%- include('./includes/navigation') -%>
+<!-- Header END -->
+
+
+<!-- **************** MAIN CONTENT START **************** -->
+<main>
+  
+    <section class="p-4 p-md-5" style="
+    background-image: url(https://mdbcdn.b-cdn.net/img/Photos/Others/background3.webp);
+  ">
+  <div class="row d-flex justify-content-center">
+    <div class="col-md-10 col-lg-8 col-xl-5">
+      <div class="card rounded-3 m-5">
+        <div class="card-body p-4 m-5">
+          <div class="text-center mb-4 m-5">
+            
+            <h1><%= message %></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+<!-- **************** MAIN CONTENT END **************** -->
+
+<!-- ======================= Footer START -->
+<%- include('./includes/footer') -%>
+<!-- ======================= Footer END -->
+
+<!-- Back to top -->
+<div class="back-top"><i class="bi bi-arrow-up-short position-absolute top-50 start-50 translate-middle"></i></div>
+
+<!-- Bootstrap JS -->
+<script src="assets/vendor/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Template Functions -->
+<script src="assets/js/functions.js"></script>
+
+
+</body>
+</html>
