@@ -7,10 +7,12 @@ const userQuerie = require('../models/queries')
 const getUserProfile = async (req, res) => {
     try {
 
-        const users = await User.find({ isActive: true }, 'profile username role');
-        if (!users) {
-            return res.status(404).json({ message: 'No users in DB' });
-        }
+        const users = await User.find(
+            { isActive: true, role: 'teacher' }
+            , 'profile username role');
+        // if (!users) {
+        //     return res.status(404).json({ message: 'No users in DB' });
+        // }
 
         res.render('index-3', { users });
     } catch (error) {

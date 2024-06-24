@@ -11,7 +11,7 @@ const tutorAvailabilitySchema = new Schema({
     },
     tutor: {
         type: Schema.Types.ObjectId,
-        ref: 'usersdatas',
+        
         required: true
     },
     date: {

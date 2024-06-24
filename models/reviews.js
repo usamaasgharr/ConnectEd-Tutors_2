@@ -3,12 +3,10 @@ const mongoose = require('mongoose');
 const reviewSchema = new mongoose.Schema({
     student: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'userDatas', // Reference to the student who wrote the review
         required: true
     },
     tutor: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'userDatas', // Reference to the tutor being reviewed
         required: true
     },
     rating: {

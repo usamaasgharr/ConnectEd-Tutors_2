@@ -4,6 +4,11 @@ const TutorAvailability = require('../models/TutorAvailability');
 const bookedSession = require('../models/bookedSessions')
 const TeacherStudent = require('../models/teachersAllStudents')
 const Review = require('../models/reviews')
+const Chat = require("../models/chat");
+
+const mongoose = require('mongoose');
+const { profile } = require("console");
+const { ObjectId } = mongoose.Types;
 
 
 
@@ -116,6 +121,13 @@ const dashboard = async (req, res, next) => {
 
     if (role === 'teacher') {
         sessions = await TutorAvailability.find({ tutor: req.user.userId });
+        const currentDate = new Date().getDate();
+        const currentHour = new Date().getHours();
+        // const currentMonth = new Date().getMonth() + 1;
+        const currentMinute = new Date().getMinutes();
+
+
+        res.render('dashboard', { user, role, sessions, currentHour, currentMinute, currentDate });
     } else {
         let session = await bookedSession.find({ student: req.user.userId });
 
@@ -132,25 +144,14 @@ const dashboard = async (req, res, next) => {
         const sessionResults = await Promise.all(sessionPromises);
 
         sessions = sessionResults.map(result => ({ TutorDetails: result.TutorDetails, sessionDetail: result.sessionDetail }));
-
+        res.render('dashboard', { user, role, sessions });
     }
     if (!user) {
         console.log('User Not Found');
         res.redirect('/login')
     }
 
-    const currentDate = new Date().getDate();
-    const currentHour = new Date().getHours();
-    const currentMonth = new Date().getMonth() + 1;
-    const currentMinute = new Date().getMinutes();
 
-    console.log(currentMonth, currentDate, currentHour, currentMinute)
-    // console.log(currentHour > Number(sessions[0].end_time.split('')[0]));
-    // console.log(typeof(Number(sessions[0].end_time[0] + sessions[0].end_time[1] )))
-
-    console.log(sessions[4].isAvailable === false || (currentHour < Number(sessions[4].end_time[0] + sessions[4].end_time[1] ) && sessions[4].date <= currentDate))
-
-    res.render('dashboard', { user, role, sessions, currentHour, currentMinute, currentDate  });
 
 
 }
@@ -160,14 +161,92 @@ const dashboard = async (req, res, next) => {
 const chats = async (req, res, next) => {
 
     const user = await User.findById(req.user.userId, 'profile');
-
     if (!user) {
         console.log('User Not Found');
         res.redirect('/login')
     }
 
-    const role = req.user.role;
-    res.render('chats', { user, role });
+    const receiver = req.query.receiver;
+    let chats = []
+    let receiverProfile = '';
+    if (receiver) {
+
+        chats = await Chat.find({
+            $or: [
+                { sender: req.user.userId, receiverId: receiver },
+                { sender: receiver, receiverId: req.user.userId }
+            ]
+        })
+        receiverProfile = await User.findById(receiver, { profile: 1 })
+
+    } else {
+        chats = [];
+        receiverProfile = null
+    }
+    // console.log(chats)
+    const usersChat = await Chat.find({
+        $or: [
+            { sender: req.user.userId },
+            { receiverId: req.user.userId }
+        ]
+    })
+
+    const users = [];
+    usersChat.forEach(item => {
+        if (!(users.includes(item.sender)) && item.sender != req.user.userId) {
+            users.push(item.sender);
+        }
+        if (!(users.includes(item.receiverId)) && item.receiverId != req.user.userId) {
+            users.push(item.receiverId);
+        }
+    })
+
+
+    const stringArray = users.map(user => user.toString());
+    const uniqueStringArray = [...new Set(stringArray)];
+
+    const allUsers = uniqueStringArray.map(str => new ObjectId(str));
+
+    const chatUsersPromises = allUsers.map(item => {
+        return User.findById(item, 'profile');
+    });
+
+    Promise.all(chatUsersPromises)
+        .then(chatUsers => {
+            // `chatUsers` will be an array of profiles
+            // console.log(chatUsers);
+            const role = req.user.role;
+            res.render('chats', { user, role, chats, userId: req.user.userId, receiverId: receiver, chatUsers, receiverProfile });
+        })
+        .catch(err => {
+            console.error('Error:', err);
+        });
+
+}
+
+const saveChats = async (req, res, next) => {
+
+    try {
+        const { message, receiverId } = req.body;
+        const sender = await User.findById(req.user.userId, 'username');
+
+        const newMessage = new Chat({
+            sender: sender,
+            receiverId,
+            message,
+        });
+
+        await newMessage.save();
+        console.log("saved;")
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("An error occurred while adding the session.");
+    }
+
+
+
+
 
 }
 
@@ -214,6 +293,7 @@ const createSession = async (req, res, next) => {
 const deleteSession = async (req, res, next) => {
 
     const deletedSession = await TutorAvailability.findByIdAndDelete(req.body.sessionId);
+    const deletedFromBookedSession = await bookedSession.deleteOne({ session: req.body.sessionId });
 
     if (!deletedSession) {
         return res.status(404).json({ message: 'Session not found' });
@@ -243,7 +323,7 @@ const editSession = async (req, res, next) => {
 // update Session in data base
 const updateSession = async (req, res, next) => {
     try {
-
+        const { start_time, end_time, price, date } = req.body;
         console.log(start_time, end_time, price, date);
 
         const session = await TutorAvailability.findById(req.body.sessionId)
@@ -441,7 +521,6 @@ const allStudents = async (req, res, next) => {
 const activeSessions = async (req, res, next) => {
     try {
         const tutor = req.user.userId;
-
         const sessions = await bookedSession.find({ tutor });
         let session = [];
 
@@ -608,4 +687,4 @@ const accountDelete = async (req, res, next) => {
     }
 };
 
-module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession, updateSession, bookSession, processPayment, allStudents, activeSessions, insReviews, add_review, post_review };
+module.exports = { getProfile, updateProfile, renderUserProfilePage, dashboard, deleteAccount, accountDelete, chats, addSessions, createSession, deleteSession, editSession, updateSession, bookSession, processPayment, allStudents, activeSessions, insReviews, add_review, post_review, saveChats };

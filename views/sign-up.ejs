@@ -52,7 +52,9 @@
                                         <img src="assets/images/element/03.svg" class="h-40px mb-2" alt="">
                                         <h2>Sign up for your account!</h2>
                                         <p class="lead mb-4">Nice to see you! Please Sign up with your account.</p>
-
+                                        <% if(error){ %>
+                                            <h4 class="bg-primary"><%= error %></h4>
+                                        <% } %>
                                         <!-- Form START -->
                                         <form action="/signup" method="POST" enctype="multipart/form-data">
                                             <!-- Email -->
@@ -77,7 +79,7 @@
                                                     <span
                                                         class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
                                                             class="bi bi-envelope-fill"></i></span>
-                                                    <input type="text" name = "username"
+                                                    <input type="text" name = "username"  minlength="6"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
                                                         placeholder="Username" id="username" required>
                                                 </div>
@@ -92,7 +94,7 @@
                                                             class="fas fa-lock"></i></span>
                                                     <input type="password" name="password"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="*********" id="inputPassword5" required>
+                                                        placeholder="*********" id="inputPassword5"  minlength="6" required>
                                                 </div>
                                             </div>
                                             <!-- Confirm Password -->

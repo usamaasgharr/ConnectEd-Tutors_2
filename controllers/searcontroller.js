@@ -40,6 +40,7 @@ const getSearchResult = async (req, res, next) => {
     }
 
     query["isActive"] = true;
+    query["role"] = 'teacher';
     // Execute the query using your MongoDB driver
     try {
         const data = await User.find(query, { profile: 1, username: 1, email: 1 });

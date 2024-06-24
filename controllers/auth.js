@@ -53,13 +53,16 @@ const signup = async (req, res) => {
             // Extract user data from request body
             const { username, email, password, role, firstName, lastName, education, bio, subjects, country, city, title } = req.body;
             const existingUsername = await User.findOne({ username });
-            if (existingUsername) {
-                return res.status(400).json({ message: 'User with this username already exists' });
+            const existingRequest = await Request.findOne({ username });
+
+            if (existingUsername || existingRequest ) {
+                return res.status(400).render('sign-up', {error: "User With This Username Already Exixt."});
             }
 
             const existingEmail = await User.findOne({ email });
-            if (existingEmail) {
-                return res.status(400).json({ message: 'User with this email already exists' });
+            const exixtingEmailRequest = await Request.findOne({ email });
+            if (existingEmail || exixtingEmailRequest ) {
+                return res.status(400).render('sign-up', {error: "User With This Email Already Exixt."});
             }
 
             let profilePicture = null;
@@ -129,6 +132,7 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
     try {
+        
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.render('sign-in', { errorMessage: errors.errors[0].msg });
@@ -138,12 +142,12 @@ const login = async (req, res) => {
 
         const check = await Request.findOne({email}) 
         
+        
         if(check){
             return res.render('sign-in', { errorMessage: 'Your Account has not been Activated Yet. Kindly Wait Untill It been Approved. ' })
         }
 
         const user = await User.findOne({ email });
-
         if (!user) {
             // return res.status(401).json({ message: 'Invalid credentials' });
             return res.render('sign-in', { errorMessage: "Invalid Crediantials " });
@@ -158,17 +162,15 @@ const login = async (req, res) => {
         }
 
 
-
-
-
         const isPasswordValid = await bcrypt.compare(password, user.password);
-
+    
         if (!isPasswordValid) {
             return res.render('sign-in', { errorMessage: 'Invalid username or password' });
         }
         const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, 'your-secret-key', { expiresIn: '12000hr' });
-
+        
         res.cookie('token', token, { httpOnly: true });
+        
         res.redirect('/user/dashboard');
 
 

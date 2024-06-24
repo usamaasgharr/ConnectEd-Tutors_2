@@ -12,7 +12,6 @@ const authMiddleware = (req, res, next) => {
   try {
     // Verify and decode the token
     const decodedToken = jwt.verify(token, 'your-secret-key');
-
     // Attach the user ID to the request for use in controllers
     req.user = { userId: decodedToken.userId, role: decodedToken.role };
     

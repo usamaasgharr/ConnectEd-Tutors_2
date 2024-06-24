@@ -22,8 +22,12 @@ const io = new Server(server);
 
 const PORT = process.env.PORT || 3000;
 
+
+
 io.on('connection', (socket) => {
-    console.log('a user connected');
+    socket.on('chat message', (msg) => {
+      io.emit('chat message', msg);
+    });
   });
 
 // Call the connectDB function to establish the database connection

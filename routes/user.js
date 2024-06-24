@@ -29,6 +29,7 @@ router.get('/delete', authMiddleware , userControllers.accountDelete )
 
 // chats
 router.get('/chats', authMiddleware , userControllers.chats )
+router.post('/chats', authMiddleware , userControllers.saveChats )
 
 // sessions management
 // ///////////////////////////////////////////////////////////////////////////
