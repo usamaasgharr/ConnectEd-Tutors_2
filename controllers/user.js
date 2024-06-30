@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const fs = require('fs');
+const jwt = require('jsonwebtoken')
 const TutorAvailability = require('../models/TutorAvailability');
 const bookedSession = require('../models/bookedSessions')
 const TeacherStudent = require('../models/teachersAllStudents')
@@ -15,13 +16,13 @@ const { ObjectId } = mongoose.Types;
 // Get user profile
 const getProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user.userId, { 'profile': 1 });
+        const user = await User.findById(req.user.userId, 'profile email username');
 
         if (!user) {
             return res.status(404).json({ message: 'User not Found' });
         }
         const role = req.user.role;
-        res.status(200).render('edit-profile', { user, role });
+        res.status(200).render('edit-profile', { user, role, title: 'editProfile' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -34,7 +35,7 @@ const updateProfile = async (req, res) => {
 
         const { firstName, lastName, education, bio, subjects, city, country, title } = req.body;
 
-        const user = await User.findById(req.user.userId);
+        const user = await User.findById(req.user.userId, 'profile email username');
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -67,13 +68,13 @@ const renderUserProfilePage = async (req, res, next) => {
     const username = req.params.username;
 
     try {
-        const user = await User.findOne({ username: username });
-
-        if (!user) {
+        const users = await User.findOne({ username: username });
+        
+        if (!users) {
             return res.status(404).send('User not found');
         }
 
-        const reviews = await Review.find({ tutor: user._id });
+        const reviews = await Review.find({ tutor: users._id });
 
 
         if (!reviews) {
@@ -98,14 +99,28 @@ const renderUserProfilePage = async (req, res, next) => {
 
 
 
-        const sessions = await TutorAvailability.find({ tutor: user._id });
+        const sessions = await TutorAvailability.find({ tutor: users._id });
+        
 
         if (!sessions) {
             return res.status(404).send('No sessions Added.');
         }
 
+        const token = req.cookies.token;
+        let user = {};
+        if (token) {
+            const secretKey = 'your-secret-key';
+            const decoded = jwt.verify(token, secretKey);
+            user.profile = decoded.profile;
+            user.email = decoded.email;
+            user.username = decoded.username;
+            
+        }else{
+            user = null;
+        }
+
         // Render the user profile page with the retrieved user data
-        res.render('instructor-details', { user, sessions, review });
+        res.render('instructor-details', { users, sessions, review, title: "", user });
     } catch (err) {
         console.error('Error fetching user data:', err);
         res.status(500).send('Internal server error');
@@ -115,7 +130,8 @@ const renderUserProfilePage = async (req, res, next) => {
 // display dashboard on successfult login
 const dashboard = async (req, res, next) => {
 
-    const user = await User.findById(req.user.userId, 'profile');
+    const user = await User.findById(req.user.userId, 'profile email username');
+
     const role = req.user.role;
     let sessions = {}
 
@@ -127,7 +143,7 @@ const dashboard = async (req, res, next) => {
         const currentMinute = new Date().getMinutes();
 
 
-        res.render('dashboard', { user, role, sessions, currentHour, currentMinute, currentDate });
+        res.render('dashboard', { user, role, sessions, currentHour, currentMinute, currentDate, title: "dashboard" });
     } else {
         let session = await bookedSession.find({ student: req.user.userId });
 
@@ -160,7 +176,7 @@ const dashboard = async (req, res, next) => {
 //chats
 const chats = async (req, res, next) => {
 
-    const user = await User.findById(req.user.userId, 'profile');
+    const user = await User.findById(req.user.userId, 'profile email username');
     if (!user) {
         console.log('User Not Found');
         res.redirect('/login')
@@ -216,7 +232,7 @@ const chats = async (req, res, next) => {
             // `chatUsers` will be an array of profiles
             // console.log(chatUsers);
             const role = req.user.role;
-            res.render('chats', { user, role, chats, userId: req.user.userId, receiverId: receiver, chatUsers, receiverProfile });
+            res.render('chats', { user, role, chats, userId: req.user.userId, receiverId: receiver, chatUsers, receiverProfile, title: 'chats' });
         })
         .catch(err => {
             console.error('Error:', err);
@@ -252,7 +268,7 @@ const saveChats = async (req, res, next) => {
 
 // sessions 
 const addSessions = async (req, res, next) => {
-    const user = await User.findById(req.user.userId, 'profile');
+    const user = await User.findById(req.user.userId, 'profile email username');
 
     if (!user) {
         console.log('User Not Found');
@@ -260,7 +276,7 @@ const addSessions = async (req, res, next) => {
     }
 
     const role = req.user.role;
-    res.render('addSessions', { user, role })
+    res.render('addSessions', { user, role, title: 'addSessions' })
 }
 
 const createSession = async (req, res, next) => {
@@ -310,7 +326,7 @@ const editSession = async (req, res, next) => {
         return res.status(404).json({ message: 'Session not found' });
     }
 
-    const user = await User.findById(req.user.userId, 'profile');
+    const user = await User.findById(req.user.userId, 'profile email username');
 
     if (!user) {
         console.log('User Not Found');
@@ -318,7 +334,7 @@ const editSession = async (req, res, next) => {
     }
 
     const role = req.user.role;
-    res.render('edit-session', { user, role, session })
+    res.render('edit-session', { user, role, session, title: '' })
 }
 // update Session in data base
 const updateSession = async (req, res, next) => {
@@ -500,7 +516,7 @@ const allStudents = async (req, res, next) => {
 
 
 
-        const user = await User.findById(req.user.userId, 'profile');
+        const user = await User.findById(req.user.userId, 'profile email username');
 
         if (!user) {
             console.log('User Not Found');
@@ -510,7 +526,7 @@ const allStudents = async (req, res, next) => {
         const role = req.user.role;
 
 
-        res.render('ins-students', { studentsData, user, role })
+        res.render('ins-students', { studentsData, user, role, title: 'students' })
 
     } catch (error) {
         console.error(error);
@@ -537,7 +553,7 @@ const activeSessions = async (req, res, next) => {
         // Populate session array with results
         session = sessionResults.map(result => ({ studentDetails: result.studentDetails, sessionDetail: result.sessionDetail }));
 
-        const user = await User.findById(req.user.userId, 'profile');
+        const user = await User.findById(req.user.userId, 'profile email username');
 
         if (!user) {
             console.log('User Not Found');
@@ -547,7 +563,7 @@ const activeSessions = async (req, res, next) => {
         const role = req.user.role;
 
         // res.json(session);
-        res.render('bookedSessions', { user, role, session });
+        res.render('bookedSessions', { user, role, session, title: 'bSessions' });
 
     } catch (error) {
         console.error(error);
@@ -581,7 +597,7 @@ const insReviews = async (req, res) => {
     review = reviewResults.map(result => ({ studentDetails: result.studentDetails, Review: result.item }));
 
 
-    const user = await User.findById(req.user.userId, 'profile');
+    const user = await User.findById(req.user.userId, 'profile email username');
 
 
 
@@ -591,7 +607,7 @@ const insReviews = async (req, res) => {
     }
 
     const role = req.user.role
-    res.render('instructor-reviews', { user, role, review });
+    res.render('instructor-reviews', { user, role, review, title: "reviews" });
 }
 
 
@@ -609,7 +625,7 @@ const add_review = async (req, res) => {
     // Wait for all promises to resolve using Promise.all
     const usernames = await Promise.all(sessionPromises);
 
-    const user = await User.findById(req.user.userId, 'profile');
+    const user = await User.findById(req.user.userId, 'profile email username');
 
     if (!user) {
         console.log('User Not Found');
@@ -617,7 +633,7 @@ const add_review = async (req, res) => {
     }
 
     const role = req.user.role
-    res.render('add-review', { user, role, usernames });
+    res.render('add-review', { user, role, usernames , title: "giveReview"});
 }
 
 // /
@@ -656,7 +672,7 @@ const post_review = async (req, res) => {
 
 // deleteAccount
 const deleteAccount = async (req, res, next) => {
-    const user = await User.findById(req.user.userId, 'profile');
+    const user = await User.findById(req.user.userId, 'profile email username');
 
 
     if (!user) {
@@ -665,7 +681,7 @@ const deleteAccount = async (req, res, next) => {
     }
 
     const role = req.user.role;
-    res.render('delete-account', { user, role })
+    res.render('delete-account', { user, role , title: 'deleteProfile'})
 }
 
 const accountDelete = async (req, res, next) => {

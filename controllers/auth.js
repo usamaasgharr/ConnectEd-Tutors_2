@@ -55,14 +55,14 @@ const signup = async (req, res) => {
             const existingUsername = await User.findOne({ username });
             const existingRequest = await Request.findOne({ username });
 
-            if (existingUsername || existingRequest ) {
-                return res.status(400).render('sign-up', {error: "User With This Username Already Exixt."});
+            if (existingUsername || existingRequest) {
+                return res.status(400).render('sign-up', { error: "User With This Username Already Exixt.", title: '' });
             }
 
             const existingEmail = await User.findOne({ email });
             const exixtingEmailRequest = await Request.findOne({ email });
-            if (existingEmail || exixtingEmailRequest ) {
-                return res.status(400).render('sign-up', {error: "User With This Email Already Exixt."});
+            if (existingEmail || exixtingEmailRequest) {
+                return res.status(400).render('sign-up', { error: "User With This Email Already Exixt.", title: '' });
             }
 
             let profilePicture = null;
@@ -132,45 +132,46 @@ const signup = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        
+
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.render('sign-in', { errorMessage: errors.errors[0].msg });
+            return res.render('sign-in', { errorMessage: errors.errors[0].msg, title: 'login' });
         }
 
         const { email, password } = req.body;
 
-        const check = await Request.findOne({email}) 
-        
-        
-        if(check){
-            return res.render('sign-in', { errorMessage: 'Your Account has not been Activated Yet. Kindly Wait Untill It been Approved. ' })
+        const check = await Request.findOne({ email })
+
+
+        if (check) {
+            return res.render('sign-in', { errorMessage: 'Your Account has not been Activated Yet. Kindly Wait Untill It been Approved. ', title: 'login' })
         }
 
         const user = await User.findOne({ email });
         if (!user) {
             // return res.status(401).json({ message: 'Invalid credentials' });
-            return res.render('sign-in', { errorMessage: "Invalid Crediantials " });
+            return res.render('sign-in', { errorMessage: "Invalid Crediantials ", title: 'login' });
         }
 
-        if(user.isActive === null){
-            return res.render('sign-in', { errorMessage: "Invalid Crediantials " });
+        if (user.isActive === null) {
+            return res.render('sign-in', { errorMessage: "Invalid Crediantials ", title: 'login' });
         }
-        
+
         if (!user.isActive) {
-            return res.render('sign-in', { errorMessage: 'Your Account has been Deactivated. Kindly Contact Us through Contact us form for more Information.' })
+            return res.render('sign-in', { errorMessage: 'Your Account has been Deactivated. Kindly Contact Us through Contact us form for more Information.', title: 'login' })
         }
 
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
-    
+
         if (!isPasswordValid) {
-            return res.render('sign-in', { errorMessage: 'Invalid username or password' });
+            return res.render('sign-in', { errorMessage: 'Invalid username or password', title: 'login' });
         }
-        const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, 'your-secret-key', { expiresIn: '12000hr' });
         
+        const token = jwt.sign({ userId: user._id, email: user.email, role: user.role, profile: user.profile, username: user.username }, 'your-secret-key', { expiresIn: '12000hr' });
+
         res.cookie('token', token, { httpOnly: true });
-        
+
         res.redirect('/user/dashboard');
 
 

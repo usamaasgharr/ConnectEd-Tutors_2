@@ -1,5 +1,6 @@
 
 const User = require("../models/user");
+const jwt = require('jsonwebtoken')
 
 
 const getSearchResult = async (req, res, next) => {
@@ -61,7 +62,20 @@ const getSearchResult = async (req, res, next) => {
             }
         })
 
-        res.render('instructors-list', { data, subjects, countrys })
+        const token = req.cookies.token;
+        let user = {};
+        if (token) {
+            const secretKey = 'your-secret-key';
+            const decoded = jwt.verify(token, secretKey);
+            user.profile = decoded.profile;
+            user.email = decoded.email;
+            user.username = decoded.username;
+            
+        }else{
+            user = null;
+        }
+
+        res.render('instructors-list', { data, subjects, countrys, title: '', user })
 
     } catch (err) {
         console.error('Error fetching data from MongoDB:', err);

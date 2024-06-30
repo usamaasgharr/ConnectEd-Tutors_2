@@ -29,9 +29,9 @@ router.use('/', authRoutes);         // login signup
 router.get('/', indexRoutes.getUserProfile);           // gets all user, review data form dataabse
 
 router.use((req, res, next)=>{
-    res.status(404).render('404');
+    res.status(404).render('404',{title: ''});
 })
-
+    
 
 
 module.exports = router;

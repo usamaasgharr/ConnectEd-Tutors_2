@@ -7,11 +7,19 @@ const router = express.Router();
 
 /////////////////////////////////
 router.get('/login', (req, res) =>{
-    res.render('sign-in', {errorMessage: null});
+    const user = {};
+    const token = req.cookies.token;
+    if (token) {
+       res.redirect('/user/dashboard');
+        
+    }else{
+        res.render('sign-in', {errorMessage: null, title: 'login', user: null});
+    }
+    
 })
 
 router.get('/signup', (req, res) =>{
-    res.render('sign-up', {error: null});
+    res.render('sign-up', {error: null, title: '', user: null});
 })
 
 /////////////////////////////////////

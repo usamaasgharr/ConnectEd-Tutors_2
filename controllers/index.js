@@ -1,5 +1,5 @@
 
-
+const jwt = require('jsonwebtoken');
 const User = require("../models/user");
 const userQuerie = require('../models/queries')
 
@@ -10,11 +10,25 @@ const getUserProfile = async (req, res) => {
         const users = await User.find(
             { isActive: true, role: 'teacher' }
             , 'profile username role');
-        // if (!users) {
-        //     return res.status(404).json({ message: 'No users in DB' });
-        // }
 
-        res.render('index-3', { users });
+
+        const token = req.cookies.token;
+        let user = {};
+        if (token) {
+            const secretKey = 'your-secret-key';
+            const decoded = jwt.verify(token, secretKey);
+            user.profile = decoded.profile;
+            user.email = decoded.email;
+            user.username = decoded.username;
+
+        } else {
+            user = null;
+        }
+
+
+
+
+        res.render('index-3', { users, title: 'home', user });
     } catch (error) {
         // Handle errors
         console.error('Error fetching user data:', error);
@@ -25,13 +39,39 @@ const getUserProfile = async (req, res) => {
 
 // contact Route
 const aboutRoute = (req, res) => {
-    res.render('about');
+    let user = {};
+    const token = req.cookies.token;
+    if (token) {
+        const secretKey = 'your-secret-key';
+        const decoded = jwt.verify(token, secretKey);
+        user.profile = decoded.profile;
+        user.email = decoded.email;
+        user.username = decoded.username;
+
+    } else {
+        user = null;
+    }
+
+    res.render('about', { title: 'about', user });
 }
 
 
 // contact Route
 const contactRoute = (req, res) => {
-    res.render('contact-us', { message: "" });
+    let user = {};
+    const token = req.cookies.token;
+    if (token) {
+        const secretKey = 'your-secret-key';
+        const decoded = jwt.verify(token, secretKey);
+        user.profile = decoded.profile;
+        user.email = decoded.email;
+        user.username = decoded.username;
+
+    } else {
+        user = null;
+    }
+
+    res.render('contact-us', { message: "", title: "contact", user });
 }
 
 // 
@@ -49,7 +89,9 @@ const contactform = async (req, res) => {
         await newQuery.save();
 
 
-        res.render('contact-us', { message: "Form Submitted." })
+
+
+        res.render('contact-us', { message: "Form Submitted.", title: 'contact', user })
     } catch (error) {
         console.error("Error submitting contact form:", error);
         res.status(500).json({ message: "Internal server error." });

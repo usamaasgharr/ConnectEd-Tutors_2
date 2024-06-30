@@ -1,6 +1,6 @@
 <%- include('./includes/sidebar.ejs') %>
 
-    <h1 class="p-4">Single Request</h1>
+    <h1 class="p-4">User Queries</h1>
 
     <% if(queries.length===0) { %>
         <h5 class="m-4 p-4">
@@ -15,13 +15,13 @@
                     <div class="tab-pane active" id="profile">
                         <hr>
 
-                        <p><b>Username: </b>
+                        <p><b>Name: </b>
                             <%= query.name %>
                         </p>
-                        <p><b>FirstName: </b>
+                        <p><b>Email: </b>
                             <%= query.email %>
                         </p>
-                        <p><b>LastName: </b>
+                        <p><b>Description: </b>
                             <%= query.message %>
                         </p>
 

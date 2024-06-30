@@ -20,16 +20,9 @@
                         <div class="col d-md-flex justify-content-between align-items-center mt-4">
                             <div>
                                 <h1 class="my-1 fs-4"><%= user.profile.firstName %> <%= user.profile.lastName  %><i class="bi bi-patch-check-fill text-info small"></i></h1>
-                                <ul class="list-inline mb-0">
-                                    <li class="list-inline-item h6 fw-light me-3 mb-1 mb-sm-0"><i class="fas fa-star text-warning me-2"></i>4.5/5.0</li>
-                                    <li class="list-inline-item h6 fw-light me-3 mb-1 mb-sm-0"><i class="fas fa-user-graduate text-orange me-2"></i>12k Enrolled Students</li>
-                                    <!-- <li class="list-inline-item h6 fw-light me-3 mb-1 mb-sm-0"><i class="fas fa-book text-purple me-2"></i>25 Courses</li> -->
-                                </ul>
+                                
                             </div>
-                            <!-- Button -->
-                            <!-- <div class="d-flex align-items-center mt-2 mt-md-0">
-                                <a href="instructor-create-course.html" class="btn btn-success mb-0">Create a course</a>
-                            </div> -->
+                            
                         </div>
                     </div>
                 </div>
@@ -72,26 +65,25 @@ Page content START -->
                             <div class="bg-dark border rounded-3 pb-0 p-3 w-100">
                                 <!-- Dashboard menu -->
                                 <div class="list-group list-group-dark list-group-borderless">
-                                    <a class="list-group-item active" href="/user/dashboard"><i class="bi bi-ui-checks-grid fa-fw me-2"></i>Dashboard</a>
-                                    <a class="list-group-item" href="/user/chats"><i class="bi bi-basket fa-fw me-2"></i>Chats</a>
+                                    <a class="list-group-item <%= title === 'dashboard' ? 'active' : '' %>" href="/user/dashboard"><i class="bi bi-ui-checks-grid fa-fw me-2"></i>Dashboard</a>
+                                    <a class="list-group-item <%= title === 'chats' ? 'active' : '' %>" href="/user/chats"><i class="bi bi-basket fa-fw me-2"></i>Chats</a>
                                     
                                     <% if(role === 'teacher'){ %>
-                                    <a class="list-group-item" href="/user/active-sessions"><i class="bi bi-graph-up fa-fw me-2"></i>Booked Sessions</a>
-                                    <a class="list-group-item" href="/user/students"><i class="bi bi-people fa-fw me-2"></i>Students</a>
-                                    <a class="list-group-item" href="/user/session_management"><i class="bi bi-graph-up fa-fw me-2"></i>Add Sessions</a>
-                                    <!-- <a class="list-group-item" href="instructor-order.html"><i class="bi bi-folder-check fa-fw me-2"></i>Payouts</a> -->
-                                    <a class="list-group-item" href="instructor-reviews"><i class="bi bi-star fa-fw me-2"></i>Reviews</a>
+                                    <a class="list-group-item <%= title === 'bSessions' ? 'active' : '' %>" href="/user/active-sessions"><i class="bi bi-graph-up fa-fw me-2"></i>Booked Sessions</a>
+                                    <a class="list-group-item <%= title === 'students' ? 'active' : '' %>" href="/user/students"><i class="bi bi-people fa-fw me-2"></i>Students</a>
+                                    <a class="list-group-item <%= title === 'addSessions' ? 'active' : '' %>" href="/user/session_management"><i class="bi bi-graph-up fa-fw me-2"></i>Add Sessions</a>
+                                    <a class="list-group-item <%= title === 'reviews' ? 'active' : '' %>" href="instructor-reviews"><i class="bi bi-star fa-fw me-2"></i>Reviews</a>
                                     <% }%>
 
-                                    <a class="list-group-item" href="/user/tutor-review"><i class="bi bi-pencil-square fa-fw me-2"></i>Give Review and Rate</a>
-                                    <a class="list-group-item" href="/user/edit-profile"><i class="bi bi-pencil-square fa-fw me-2"></i>Edit Profile</a>
-                                    <a class="list-group-item" href="/user/delete-account"><i class="bi bi-wallet2 fa-fw me-2"></i>Delete Profile</a>
+                                    <a class="list-group-item <%= title === 'giveReview' ? 'active' : '' %>" href="/user/tutor-review"><i class="bi bi-pencil-square fa-fw me-2"></i>Give Review and Rate</a>
+                                    <a class="list-group-item <%= title === 'editProfile' ? 'active' : '' %>" href="/user/edit-profile"><i class="bi bi-pencil-square fa-fw me-2"></i>Edit Profile</a>
+                                    <a class="list-group-item <%= title === 'deleteProfile' ? 'active' : '' %>" href="/user/delete-account"><i class="bi bi-wallet2 fa-fw me-2"></i>Delete Profile</a>
                                     <a class="list-group-item" href="/signout"><i class="bi bi-gear fa-fw me-2"></i>Sign Out</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </nav>
-                <!-- Responsive offcanvas body END -->
+                
             </div>
-            <!-- Right sidebar END -->
+            

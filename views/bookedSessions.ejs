@@ -59,7 +59,7 @@
                                                             </div>
                                                             <div class="mb-0 ms-2">
                                                                 <!-- Title -->
-                                                                <h6 class="mb-0"><a href="/user/<%= sessions.studentDetails.username %>" class="stretched-link"><%= sessions.studentDetails.profile.firstName%> <%= sessions.studentDetails.profile.firstName%></a></h6>
+                                                                <h6 class="mb-0"><a href="/user/<%= sessions.studentDetails.username %>" class="stretched-link"><%= sessions.studentDetails.profile.firstName%> <%= sessions.studentDetails.profile.lastName %></a></h6>
                                                                 <!-- Address -->
                                                                 <span class="text-body small"><i class="fas fa-fw fa-map-marker-alt me-1 mt-1"></i><%= sessions.studentDetails.profile.location.city%>, <%= sessions.studentDetails.profile.location.country%> </span>
                                                             </div>
@@ -80,7 +80,7 @@
             
                                                     <!-- Table data -->
                                                     <td>
-                                                        <button class="btn btn-danger-soft btn-round mb-0">Start Session</button>
+                                                        <button class="btn btn-danger-soft btn-round mb-0"><a href="https://meet.google.com/" target="_blank">Start Session</a></button>
                                                     </td>
 
                                                     <!-- Table data -->
