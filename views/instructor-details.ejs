@@ -28,7 +28,7 @@
                 <div class="card shadow p-2 mb-4 text-center">
                   <div class="rounded-3">
                     <!-- Image -->
-                    <img src="/uploads/<%= user.profile.profilePicture %>" class="card-img" alt="course image">
+                    <img src="/uploads/<%= users.profile.profilePicture %>" class="card-img" alt="course image">
                   </div>
         
                   <!-- Card body -->
@@ -59,32 +59,32 @@
                 
                     <!-- Title -->
                     <h5 class="mb-0">Hi, I am</h5>
-                    <h1 class="mb-0 text-capitalize"><%= user.profile.firstName %> <%= user.profile.lastName %></h1>
-                    <p><%= user.profile.title %></p>
+                    <h1 class="mb-0 text-capitalize"><%= users.profile.firstName %> <%= users.profile.lastName %></h1>
+                    <p><%= users.profile.title %></p>
                     <!-- Content -->
-                    <p class="mt-4"><%= user.profile.bio %></p>
+                    <p class="mt-4"><%= users.profile.bio %></p>
                     <!-- Personal info -->
                     <ul class="list-group list-group-borderless">
                         <li class="list-group-item px-0">
                             <span class="h6 fw-light"><i class="fas fa-fw fa-map-marker-alt text-primary me-1 me-sm-3"></i>Username:</span>
-                            <span><%= user.username %></span>
+                            <span><%= users.username %></span>
                         </li>
                         <li class="list-group-item px-0">
                             <span class="h6 fw-light"><i class="fas fa-fw fa-map-marker-alt text-primary me-1 me-sm-3"></i>Location:</span>
-                            <span><%= user.profile.location.city %>, <%= user.profile.location.country %></span>
+                            <span><%= users.profile.location.city %>, <%= users.profile.location.country %></span>
                         </li>
                         <li class="list-group-item px-0">
                             <span class="h6 fw-light"><i class="fas fa-fw fa-envelope text-primary me-1 me-sm-3"></i>Email:</span>
-                            <span><%= user.email %></span>
+                            <span><%= users.email %></span>
                         </li>
 
-                        <% for (let subject of user.profile.subjects) { %>
+                        <% for (let subject of users.profile.subjects) { %>
                             <li class="list-group-item px-0">
                                 <span class="h6 fw-light"><i class="fas fa-fw fa-envelope text-primary me-1 me-sm-3"></i>Expertise:</span>
                                 <span><%= subject %></span>
                             </li>
                         <% } %>
-                        <li class="p-3" ><form action="/user/chats" method="get"><input name="receiver" type="hidden" value="<%= user._id %>"><button class="btn btn-primary" type="submit">Contact Me</button></form></li>
+                        <li class="p-3" ><form action="/user/chats" method="get"><input name="receiver" type="hidden" value="<%= users._id %>"><button class="btn btn-primary" type="submit">Contact Me</button></form></li>
                     </ul>
                     
                    

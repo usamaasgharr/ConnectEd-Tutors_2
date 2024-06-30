@@ -88,7 +88,18 @@ const contactform = async (req, res) => {
         // Save the new session to the database
         await newQuery.save();
 
-
+        let user = {};
+        const token = req.cookies.token;
+        if (token) {
+            const secretKey = 'your-secret-key';
+            const decoded = jwt.verify(token, secretKey);
+            user.profile = decoded.profile;
+            user.email = decoded.email;
+            user.username = decoded.username;
+    
+        } else {
+            user = null;
+        }
 
 
         res.render('contact-us', { message: "Form Submitted.", title: 'contact', user })

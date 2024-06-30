@@ -61,7 +61,7 @@
 				<a class="avatar avatar-sm p-0" href="#" id="profileDropdown" role="button" data-bs-auto-close="outside"
 					data-bs-display="static" data-bs-toggle="dropdown" aria-expanded="false">
 					<img class="avatar-img rounded-circle"
-						src="<%= user ? '/uploads/' + user.profile.profilePicture : 'assets/images/avatar/01.jpg' %>"
+						src="<%= user ? '/uploads/' + user.profile.profilePicture : 'assets/images/avatar/blank.jpg' %>"
 						alt="avatar">
 
 				</a>
@@ -69,37 +69,49 @@
 				<ul class="dropdown-menu dropdown-animation dropdown-menu-end shadow pt-3"
 					aria-labelledby="profileDropdown">
 					<!-- Profile info -->
-					<li class="px-3">
-						<div class="d-flex align-items-center">
-							<!-- Avatar -->
-							<div class="avatar me-3">
-								
-								<img class="avatar-img rounded-circle shadow"
-									src="<%= user ? '/uploads/' + user.profile.profilePicture : 'assets/images/avatar/01.jpg' %>"
-									alt="avatar">
-							</div>
-							<div>
-								<% if(user){ %>
-								<a class="h6" href="/user/<%= user.username %>"><%= user.profile.firstName %> <%= user.profile.lastName %> </a>
-								<p class="small m-0"><%= user.email %></p>
-								<% } %>
-							</div>
-						</div>
-						<hr>
-					</li>
-					<!-- Links -->
-					<li><a class="dropdown-item" href="/user/dashboard"><i
-								class="bi bi-person fa-fw me-2"></i>Dashboard</a></li>
-					<li><a class="dropdown-item" href="/user/edit-profile"><i class="bi bi-person fa-fw me-2"></i>Edit
-							Profile</a></li>
-					<li><a class="dropdown-item bg-danger-soft-hover" href="/signout"><i
-								class="bi bi-power fa-fw me-2"></i>Sign Out</a></li>
-					<li>
-						<hr class="dropdown-divider">
-					</li>
-					<!-- Dark mode switch START -->
+					<% if(user){ %>
+						<li class="px-3">
 
-					<!-- Dark mode switch END -->
+							<div class="d-flex align-items-center">
+								<!-- Avatar -->
+								<div class="avatar me-3">
+
+									<img class="avatar-img rounded-circle shadow"
+										src="<%= user ? '/uploads/' + user.profile.profilePicture : 'assets/images/avatar/01.jpg' %>"
+										alt="avatar">
+								</div>
+								<div>
+
+									<a class="h6" href="/user/<%= user.username %>">
+										<%= user.profile.firstName %>
+											<%= user.profile.lastName %>
+									</a>
+									<p class="small m-0">
+										<%= user.email %>
+									</p>
+
+								</div>
+							</div>
+
+
+							<hr>
+						</li>
+						<!-- Links -->
+						<li><a class="dropdown-item" href="/user/dashboard"><i
+									class="bi bi-person fa-fw me-2"></i>Dashboard</a></li>
+						<li><a class="dropdown-item" href="/user/edit-profile"><i
+									class="bi bi-person fa-fw me-2"></i>Edit
+								Profile</a></li>
+						<li><a class="dropdown-item bg-danger-soft-hover" href="/signout"><i
+									class="bi bi-power fa-fw me-2"></i>Sign Out</a></li>
+						<li>
+							<hr class="dropdown-divider">
+						</li>
+						<!-- Dark mode switch START -->
+						<% }else{ %>
+							<button class="btn btn-primary w-100"><a href="/login" class="text-white">Login</a></button>
+							<% } %>
+								<!-- Dark mode switch END -->
 				</ul>
 			</div>
 			<!-- Profile START -->
