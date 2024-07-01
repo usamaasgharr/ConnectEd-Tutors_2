@@ -2,6 +2,7 @@
 const jwt = require('jsonwebtoken');
 const User = require("../models/user");
 const userQuerie = require('../models/queries')
+const Reviews = require('../models/reviews')
 
 
 const getUserProfile = async (req, res) => {
@@ -25,10 +26,26 @@ const getUserProfile = async (req, res) => {
             user = null;
         }
 
+        let ratings = [];
+        for (let i in users) {
+            
+            let rate = await Reviews.find({ tutor: users[i]._id })
+            
+            let sum = 0;
+            if (rate.length > 0) {
+                for (let j in rate) {
+                    sum += rate[j].rating;
+                }
+                sum = Math.round(sum / rate.length);
+                ratings.push({ rating: sum, id: users[i]._id });
+            } else {
+                ratings.push({ rating: sum, id: users[i]._id });
+            }
+
+        }
 
 
-
-        res.render('index-3', { users, title: 'home', user });
+        res.render('index-3', { users, title: 'home', user, ratings });
     } catch (error) {
         // Handle errors
         console.error('Error fetching user data:', error);

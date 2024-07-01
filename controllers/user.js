@@ -69,7 +69,7 @@ const renderUserProfilePage = async (req, res, next) => {
 
     try {
         const users = await User.findOne({ username: username });
-        
+
         if (!users) {
             return res.status(404).send('User not found');
         }
@@ -100,7 +100,7 @@ const renderUserProfilePage = async (req, res, next) => {
 
 
         const sessions = await TutorAvailability.find({ tutor: users._id });
-        
+
 
         if (!sessions) {
             return res.status(404).send('No sessions Added.');
@@ -114,13 +114,31 @@ const renderUserProfilePage = async (req, res, next) => {
             user.profile = decoded.profile;
             user.email = decoded.email;
             user.username = decoded.username;
-            
-        }else{
+
+        } else {
             user = null;
         }
 
+        let ratings = {};
+
+            let rate = await Review.find({ tutor: users._id })
+            
+            let sum = 0;
+            if (rate.length > 0) {
+                for (let j in rate) {
+                    sum += rate[j].rating;
+                }
+                sum = Math.round(sum / rate.length);
+                ratings.rating = sum
+                ratings.id = users._id;
+            } else {
+                ratings.rating = sum
+                ratings.id = users._id;
+            }
+
+
         // Render the user profile page with the retrieved user data
-        res.render('instructor-details', { users, sessions, review, title: "", user });
+        res.render('instructor-details', { users, sessions, review, title: "", user, ratings });
     } catch (err) {
         console.error('Error fetching user data:', err);
         res.status(500).send('Internal server error');
@@ -633,7 +651,7 @@ const add_review = async (req, res) => {
     }
 
     const role = req.user.role
-    res.render('add-review', { user, role, usernames , title: "giveReview"});
+    res.render('add-review', { user, role, usernames, title: "giveReview" });
 }
 
 // /
@@ -681,7 +699,7 @@ const deleteAccount = async (req, res, next) => {
     }
 
     const role = req.user.role;
-    res.render('delete-account', { user, role , title: 'deleteProfile'})
+    res.render('delete-account', { user, role, title: 'deleteProfile' })
 }
 
 const accountDelete = async (req, res, next) => {

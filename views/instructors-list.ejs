@@ -109,7 +109,12 @@
                                             <h5 class="card-title mb-0"><a href="/user/<%= user.username %>"><%= user.profile.firstName %> <%= user.profile.lastName %></a></h5>
                                             <p class="small mb-2 mb-sm-0"><%= user.profile.title %></p>
                                         </div>
-                                        <span class="h6 fw-light">4.3<i class="fas fa-star text-warning ms-1"></i></span>
+                                        <% for (var i in ratings) { %>
+                                            <% if (ratings[i].id === user._id) { %>
+                                                <span class="h6 fw-light"><%= ratings[i].rating %>.0<i class="fas fa-star text-warning ms-1"></i></span>
+                                            <% break; } %>
+                                        <% } %>
+                                        
                                     </div>
                                     <!-- Content -->
                                     <p class="text-truncate-2 mb-3"><%= user.profile.bio %></p>

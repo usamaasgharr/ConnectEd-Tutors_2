@@ -138,12 +138,17 @@ Instructor START -->
 
 							<!-- Rating -->
 							<ul class="list-inline hstack justify-content-center">
-								<li class="list-inline-item ms-2 h6 fw-light mb-0">4.5/5.0</li>
-								<li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-								<li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-								<li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-								<li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
-								<li class="list-inline-item me-0 small"><i class="fas fa-star-half-alt text-warning"></i></li>
+								<% for (var i in ratings) { %>
+									<% if (ratings[i].id === user._id) { %>
+										<li class="list-inline-item ms-2 h6 fw-light mb-0"><%= ratings[i].rating %>.0 /5.0</li>
+										<% for(let k=0;k<ratings[i].rating;k++){ %>
+											<li class="list-inline-item me-0 small"><i class="fas fa-star text-warning"></i></li>
+										<%} for(let k=ratings[i].rating; k<5;k++){ %>
+											<li class="list-inline-item me-0"><i class="far fa-star text-warning"></i></li>
+									<%  } break; } %>
+								<% } %>
+								
+								
 							</ul>
 						</div>
 					</div>

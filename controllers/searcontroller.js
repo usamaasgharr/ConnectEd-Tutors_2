@@ -1,5 +1,6 @@
 
 const User = require("../models/user");
+const Reviews = require('../models/reviews')
 const jwt = require('jsonwebtoken')
 
 
@@ -70,12 +71,29 @@ const getSearchResult = async (req, res, next) => {
             user.profile = decoded.profile;
             user.email = decoded.email;
             user.username = decoded.username;
-            
-        }else{
+
+        } else {
             user = null;
         }
 
-        res.render('instructors-list', { data, subjects, countrys, title: '', user })
+        let ratings = [];
+        for (let i in data) {
+            
+            let rate = await Reviews.find({ tutor: data[i]._id })
+            let sum = 0;
+            if (rate.length > 0) {
+                for (let j in rate) {
+                    sum += rate[j].rating;
+                }
+                sum = Math.round(sum / rate.length);
+                ratings.push({ rating: sum, id: data[i]._id });
+            } else {
+                ratings.push({ rating: sum, id: data[i]._id });
+            }
+
+        }
+
+        res.render('instructors-list', { data, subjects, countrys, title: '', user, ratings })
 
     } catch (err) {
         console.error('Error fetching data from MongoDB:', err);
