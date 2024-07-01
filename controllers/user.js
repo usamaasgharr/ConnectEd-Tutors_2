@@ -22,7 +22,7 @@ const getProfile = async (req, res) => {
             return res.status(404).json({ message: 'User not Found' });
         }
         const role = req.user.role;
-        res.status(200).render('edit-profile', { user, role, title: 'editProfile' });
+        res.status(200).render('edit-profile', { user, role, title: 'editProfile', message: null });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -36,7 +36,7 @@ const updateProfile = async (req, res) => {
         const { firstName, lastName, education, bio, subjects, city, country, title } = req.body;
 
         const user = await User.findById(req.user.userId, 'profile email username');
-
+        const role = req.user.role;
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
@@ -54,7 +54,7 @@ const updateProfile = async (req, res) => {
 
         await user.save();
 
-        res.status(200).json({ message: 'User profile updated successfully' });
+        res.status(200).render('edit-profile', { user, role, title: 'editProfile', message: "Profile Updated Sucessfully" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -121,20 +121,20 @@ const renderUserProfilePage = async (req, res, next) => {
 
         let ratings = {};
 
-            let rate = await Review.find({ tutor: users._id })
-            
-            let sum = 0;
-            if (rate.length > 0) {
-                for (let j in rate) {
-                    sum += rate[j].rating;
-                }
-                sum = Math.round(sum / rate.length);
-                ratings.rating = sum
-                ratings.id = users._id;
-            } else {
-                ratings.rating = sum
-                ratings.id = users._id;
+        let rate = await Review.find({ tutor: users._id })
+
+        let sum = 0;
+        if (rate.length > 0) {
+            for (let j in rate) {
+                sum += rate[j].rating;
             }
+            sum = Math.round(sum / rate.length);
+            ratings.rating = sum
+            ratings.id = users._id;
+        } else {
+            ratings.rating = sum
+            ratings.id = users._id;
+        }
 
 
         // Render the user profile page with the retrieved user data
@@ -651,7 +651,7 @@ const add_review = async (req, res) => {
     }
 
     const role = req.user.role
-    res.render('add-review', { user, role, usernames, title: "giveReview" });
+    res.render('add-review', { user, role, usernames, title: "giveReview", message: null });
 }
 
 // /
@@ -664,7 +664,6 @@ const post_review = async (req, res) => {
 
         const tutorId = await User.findOne({ username: tutor }, { _id: 1 });
 
-        console.log(tutorId)
 
         // Create a new review object
         const newReview = new Review({
@@ -673,12 +672,31 @@ const post_review = async (req, res) => {
             comment: comment,
             rating: ratings
         });
+        const _id = req.user.userId;
 
+        const tutors = await TeacherStudent.find({ students: { $in: _id } }, { tutor: 1 });
+
+        const sessionPromises = tutors.map(async tutor => {
+            const tutorUsername = await User.findById(tutor.tutor, { username: 1 });
+            return tutorUsername;
+        });
+
+        // Wait for all promises to resolve using Promise.all
+        const usernames = await Promise.all(sessionPromises);
+
+        const user = await User.findById(req.user.userId, 'profile email username');
+
+        if (!user) {
+            console.log('User Not Found');
+            res.redirect('/login')
+        }
+
+        const role = req.user.role
         // Save the review to the database
         const savedReview = await newReview.save();
 
         // Respond with a success message
-        res.status(201).json({ message: 'Review posted successfully', review: savedReview });
+        res.render('add-review', { user, role, usernames, title: "giveReview", message: "Review Posted Sucessfully" });
     } catch (error) {
         // Handle any errors
         console.error('Error posting review:');

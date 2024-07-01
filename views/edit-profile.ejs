@@ -22,6 +22,9 @@
                 <div class="col-lg-9 col-md-8 col-12">
 					<!-- Card -->
 					<div class="card">
+						<% if(message){ %>
+							<h3 class="text-success"><%= message %></h3>
+						<% } %>
 						<!-- Card header -->
 						<div class="card-header">
 							<h3 class="mb-0">Profile Details</h3>
@@ -29,7 +32,7 @@
 								You have full control to manage your own account setting.
 							</p>
 						</div>
-						<!-- Card body -->
+
 						<div class="card-body">
 							<div class="d-lg-flex align-items-center justify-content-between">
 								<div class="d-flex align-items-center mb-4 mb-lg-0">
