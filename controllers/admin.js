@@ -4,6 +4,7 @@ const User = require('../models/user')
 const Requests = require('../models/accountRequests')
 const bcrypt = require('bcryptjs')
 const userQuerie = require('../models/queries')
+const Chats = require("../models/chat")
 
 
 
@@ -212,6 +213,48 @@ const view_queries = async (req, res) => {
     res.render('admin/userQueries', { queries })
 };
 
+// ///////////////////////////////////
+
+const watch_chats = async (req, res) => {
+    
+    try {
+            
+        if (Object.keys(req.query).length !== 0 ) {
+            const { username1, username2 } = req.query;
+
+
+            const user_1 = await User.findOne({ username: username1 }, { _id: 1, username: 1, });
+            const user_2 = await User.findOne({ username: username2 }, { _id: 1, username: 1 });
+
+            if (!user_1) {
+                res.render('admin/watch-chats', { errorMessage: "Username-1 is Incorrect" ,chats: null})
+            }
+            if (!user_2) {
+                res.render('admin/watch-chats', { errorMessage: "Username-2 is Incorrect",chats: null})
+            }
+
+            const chats = await Chats.find({
+                $or: [
+                    { sender: user_1._id, receiverId: user_2._id },
+                    { sender: user_2._id, receiverId: user_1._id }
+                ]
+            })
+
+
+
+
+            res.render('admin/watch-chats', { errorMessage: null, chats, user_1, user_2 });
+        }else{
+            res.render('admin/watch-chats', { errorMessage: null, chats: null, user_1: null, user_2: null    });
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).send("An error occurred while adding the session.");
+    }
+
+};
+
+
 
 // /////////////////////////////////////////////////////////
 const AdminloginPage = async (req, res) => {
@@ -226,4 +269,4 @@ const dashboard = async (req, res) => {
 
 
 
-module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus, AdminloginPage, dashboard, addNewAdmin_View, deleteUserAccount_View, toggleUserStatus_View, allRequests, request_View, req_status, view_queries }
+module.exports = { addNewAdmin, deleteUserAccount, searchUser, toggleUserStatus, AdminloginPage, dashboard, addNewAdmin_View, deleteUserAccount_View, toggleUserStatus_View, allRequests, request_View, req_status, view_queries, watch_chats }

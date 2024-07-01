@@ -13,6 +13,9 @@ const router = express.Router();
 router.get('/add-new',adminMiddleware ,adminController.addNewAdmin_View)
 router.post('/add-new',adminMiddleware ,adminController.addNewAdmin)
 
+router.get('/watch-chats',adminMiddleware ,adminController.watch_chats)
+
+
 // user Queries
 router.get('/user-queries',adminMiddleware ,adminController.view_queries)
 

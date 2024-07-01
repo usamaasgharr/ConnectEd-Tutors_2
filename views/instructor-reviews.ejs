@@ -43,7 +43,8 @@
                                 <% review.forEach(item=>{ %>
                                 <div class="d-sm-flex">
                                     <!-- Avatar image -->
-                                    <img class="avatar avatar-lg rounded-circle float-start me-3" src="/uploads/<%= item.studentDetails.profile.profilePicture%>" alt="avatar">
+                                    <img class="avatar avatar-lg rounded-circle float-start me-3" style="object-fit: cover;" src="/uploads/<%= item.studentDetails.profile.profilePicture%>" alt="avatar">
+                                    
                                     <div>
                                         <div class="mb-3 d-sm-flex justify-content-sm-between align-items-center">
                                             <!-- Title -->
