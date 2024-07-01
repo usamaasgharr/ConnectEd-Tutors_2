@@ -9,7 +9,7 @@ const getUserProfile = async (req, res) => {
 
         const users = await User.find(
             { isActive: true, role: 'teacher' }
-            , 'profile username role');
+            , 'profile username');
 
 
         const token = req.cookies.token;

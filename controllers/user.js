@@ -160,7 +160,7 @@ const dashboard = async (req, res, next) => {
         const sessionResults = await Promise.all(sessionPromises);
 
         sessions = sessionResults.map(result => ({ TutorDetails: result.TutorDetails, sessionDetail: result.sessionDetail }));
-        res.render('dashboard', { user, role, sessions });
+        res.render('dashboard', { user, role, sessions, title: "dashboard" });
     }
     if (!user) {
         console.log('User Not Found');
