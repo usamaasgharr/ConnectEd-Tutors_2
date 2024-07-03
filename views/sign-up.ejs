@@ -38,9 +38,10 @@
                                         <h2>Sign up for your account!</h2>
                                         <p class="lead mb-4">Nice to see you! Please Sign up with your account.</p>
                                         <% if(error){ %>
-                                            <h4 class="bg-primary"><%= error %></h4>
+                                            <h4 class="text-uppercase text-danger"><%= error %></h4>
                                         <% } %>
                                         <!-- Form START -->
+                                        <% if(data !== null){ %>
                                         <form action="/signup" method="POST" enctype="multipart/form-data">
                                             <!-- Email -->
                                             <div class="mb-4">
@@ -52,7 +53,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <input type="email" name = "email"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="E-mail" id="exampleInputEmail1" required>
+                                                        placeholder="E-mail" value="<%= data.email %>" id="exampleInputEmail1" required>
                                                 </div>
                                             </div>
 
@@ -64,9 +65,9 @@
                                                     <span
                                                         class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
                                                             class="bi bi-envelope-fill"></i></span>
-                                                    <input type="text" name = "username"  minlength="6"
+                                                    <input type="text" name = "username" 
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="Username" id="username" required>
+                                                        placeholder="Username" value="<%= data.username %>" id="username" required>
                                                 </div>
                                             </div>
 
@@ -79,7 +80,7 @@
                                                             class="fas fa-lock"></i></span>
                                                     <input type="password" name="password"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="*********" id="inputPassword5"  minlength="6" required>
+                                                        placeholder="*********" id="inputPassword5" value="<%= data.password %>" required>
                                                 </div>
                                             </div>
                                             <!-- Confirm Password -->
@@ -106,7 +107,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <input type="text" name = "firstName"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="i,e. John" id="firstName">
+                                                        placeholder="i,e. John" value="<%= data.firstName %>" id="firstName">
                                                 </div>
                                             </div>
 
@@ -120,7 +121,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <input type="text" name = "lastName"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="i,e. Doe" id="lastName">
+                                                        placeholder="i,e. Doe" value="<%= data.lastName %>" id="lastName">
                                                 </div>
                                             </div>
 
@@ -135,7 +136,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <input type="text" name = "title"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="e,g. Graphic Designer" id="title">
+                                                        placeholder="e,g. Graphic Designer" value="<%= data.title %>" id="title">
                                                 </div>
                                             </div>
 
@@ -143,9 +144,11 @@
                                             <div class="mb-4">
                                                 <label for="exampleInputEmail1" class="form-label">Role
                                                     *</label>
-                                                    <select type="text" name = "role" class="form-control border-0 bg-light rounded-end ps-1" id="role">
+                                                    <select type="text" name = "role" value="<%= data.role %>" class="form-control border-0 bg-light rounded-end ps-1" id="role">
                                                         <option>teacher</option>
                                                         <option>student</option>
+
+
                                                     </select>
                                             </div>
 
@@ -159,7 +162,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <input type="text" name = "education"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="i,e BSCS" id="education">
+                                                        placeholder="i,e BSCS" value="<%= data.education %>" id="education">
                                                 </div>
                                             </div>
 
@@ -173,7 +176,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <textarea  name = "bio"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="Description about you." id="bio"></textarea>
+                                                        placeholder="Description about you." value="<%= data.bio %>" id="bio"></textarea>
                                                 </div>
                                             </div>
 
@@ -187,7 +190,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <input type="text" name = "subjects"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="i,e BSCS" id="subjects">
+                                                        placeholder="i,e BSCS" id="subjects", value="<%= data.subjects %>">
                                                 </div>
                                             </div>
 
@@ -201,7 +204,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <input type="text" name = "country"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="e,g Pakistan" id="country">
+                                                        placeholder="e,g Pakistan" id="country" value="<%= data.country %>">
                                                 </div>
                                             </div>
 
@@ -215,7 +218,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <input type="text" name = "city"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="i,e Lahore" id="city">
+                                                        placeholder="i,e Lahore" id="city" value="<%= data.city %>">
                                                 </div>
                                             </div>
 
@@ -232,7 +235,7 @@
                                                             class="bi bi-envelope-fill"></i></span>
                                                     <input type="file" name="profile.profilePicture"
                                                         class="form-control border-0 bg-light rounded-end ps-1"
-                                                        placeholder="i,e BSCS" id="profilePicture">
+                                                        placeholder="i,e BSCS" id="profilePicture" required>
                                                 </div>
                                             </div>
                                             
@@ -243,6 +246,210 @@
                                                 </div>
                                             </div>
                                         </form>
+                                        <% } else{ %>
+                                            <form action="/signup" method="POST" enctype="multipart/form-data">
+                                                <!-- Email -->
+                                                <div class="mb-4">
+                                                    <label for="exampleInputEmail1" class="form-label">Email address
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="email" name = "email"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="E-mail" id="exampleInputEmail1" required>
+                                                    </div>
+                                                </div>
+    
+                                                <!-- username -->
+                                                <div class="mb-4">
+                                                    <label for="username" class="form-label">Username
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="text" name = "username"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="Username" id="username" required>
+                                                    </div>
+                                                </div>
+    
+                                                <!-- Password -->
+                                                <div class="mb-4">
+                                                    <label for="inputPassword5" class="form-label">Password *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="fas fa-lock"></i></span>
+                                                        <input type="password" name="password"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="*********" id="inputPassword5"  required>
+                                                    </div>
+                                                </div>
+                                                <!-- Confirm Password -->
+                                                <!-- <div class="mb-4">
+                                                    <label for="inputPassword6" class="form-label">Confirm Password
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="fas fa-lock"></i></span>
+                                                        <input type="password"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="*********" id="inputPassword6">
+                                                    </div>
+                                                </div> -->
+                                                
+                                                <!-- firstname -->
+                                                <div class="mb-4">
+                                                    <label for="firstname" class="form-label">First Name
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="text" name = "firstName"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="i,e. John" id="firstName">
+                                                    </div>
+                                                </div>
+    
+                                                <!-- lastname -->
+                                                <div class="mb-4">
+                                                    <label for="lastname" class="form-label">Last Name
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="text" name = "lastName"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="i,e. Doe" id="lastName">
+                                                    </div>
+                                                </div>
+    
+                                                <!-- title -->
+    
+                                                <div class="mb-4">
+                                                    <label for="title" class="form-label">Title
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="text" name = "title"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="e,g. Graphic Designer" id="title">
+                                                    </div>
+                                                </div>
+    
+                                                <!-- role -->
+                                                <div class="mb-4">
+                                                    <label for="exampleInputEmail1" class="form-label">Role
+                                                        *</label>
+                                                        <select type="text" name = "role" class="form-control border-0 bg-light rounded-end ps-1" id="role">
+                                                            <option>teacher</option>
+                                                            <option>student</option>
+                                                        </select>
+                                                </div>
+    
+                                                <!-- education -->
+                                                <div class="mb-4">
+                                                    <label for="education" class="form-label">Education
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="text" name = "education"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="i,e BSCS" id="education">
+                                                    </div>
+                                                </div>
+    
+                                                <!-- bio -->
+                                                <div class="mb-4">
+                                                    <label for="bio" class="form-label">Bio
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <textarea  name = "bio"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="Description about you." id="bio"></textarea>
+                                                    </div>
+                                                </div>
+    
+                                                <!-- subjects -->
+                                                <div class="mb-4">
+                                                    <label for="subjects" class="form-label">Subjects
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="text" name = "subjects"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="i,e BSCS" id="subjects">
+                                                    </div>
+                                                </div>
+    
+                                                <!-- country -->
+                                                <div class="mb-4">
+                                                    <label for="country" class="form-label">Country
+                                                        </label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="text" name = "country"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="e,g Pakistan" id="country">
+                                                    </div>
+                                                </div>
+    
+                                                <!-- city -->
+                                                <div class="mb-4">
+                                                    <label for="city" class="form-label">City
+                                                        </label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="text" name = "city"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="i,e Lahore" id="city">
+                                                    </div>
+                                                </div>
+    
+    
+    
+    
+                                                 <!-- profile Picture -->
+                                                 <div class="mb-4">
+                                                    <label for="profilepicture" class="form-label">Profile Picture
+                                                        *</label>
+                                                    <div class="input-group input-group-lg">
+                                                        <span
+                                                            class="input-group-text bg-light rounded-start border-0 text-secondary px-3"><i
+                                                                class="bi bi-envelope-fill"></i></span>
+                                                        <input type="file" name="profile.profilePicture"
+                                                            class="form-control border-0 bg-light rounded-end ps-1"
+                                                            placeholder="i,e BSCS" id="profilePicture" required>
+                                                    </div>
+                                                </div>
+                                                
+                                                <!-- Button -->
+                                                <div class="align-items-center mt-0">
+                                                    <div class="d-grid">
+                                                        <button class="btn btn-primary mb-0" type="submit">Sign Up</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        <% } %>
                                         <!-- Form END -->
 
                                         <!-- Social buttons -->
@@ -250,7 +457,7 @@
 
                                         <!-- Sign up link -->
                                         <div class="mt-4 text-center">
-                                            <span>Already have an account?<a href="sign-in.html"> Sign in
+                                            <span>Already have an account?<a href="login"> Sign in
                                                     here</a></span>
                                         </div>
                                     </div>

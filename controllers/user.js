@@ -396,9 +396,23 @@ const bookSession = async (req, res, next) => {
         if (!session) {
             return res.status(404).json({ message: 'Session not found' });
         }
+
+        const token = req.cookies.token;
+        let user = {};
+        if (token) {
+            const secretKey = 'your-secret-key';
+            const decoded = jwt.verify(token, secretKey);
+            user.profile = decoded.profile;
+            user.email = decoded.email;
+            user.username = decoded.username;
+
+        } else {
+            user = null;
+        }
+
         const stripe_public_key = process.env.STRIPE_PUBLIC_KEY;
 
-        res.render('payment', { session, tutor, stripe_public_key, sessionId, tutorId, message: "" })
+        res.render('payment', { session, tutor, stripe_public_key, sessionId, tutorId, message: "", title: null, user })
 
     } catch (error) {
         console.error(error);
@@ -507,7 +521,20 @@ const processPayment = async (req, res, next) => {
             await teacherStudent.save();
         }
 
-        res.render('payment-status', { message: "Payment Sucessfull. Session Booked" });
+        const tokenn = req.cookies.token;
+        let user = {};
+        if (tokenn) {
+            const secretKey = 'your-secret-key';
+            const decoded = jwt.verify(tokenn, secretKey);
+            user.profile = decoded.profile;
+            user.email = decoded.email;
+            user.username = decoded.username;
+
+        } else {
+            user = null;
+        }
+
+        res.render('payment-status', { message: "Payment Sucessfull. Session Booked", title: null, user });
     } catch (error) {
 
         console.error('Payment failed:', error);

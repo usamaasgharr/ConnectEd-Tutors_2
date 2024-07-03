@@ -42,7 +42,7 @@ const upload = multer({
 const uploadProfilePicture = upload.single('profile.profilePicture');
 
 const signup = async (req, res) => {
-
+    console.log(req.body)
     try {
         // Handle profile picture upload
         uploadProfilePicture(req, res, async (err) => {
@@ -52,17 +52,50 @@ const signup = async (req, res) => {
 
             // Extract user data from request body
             const { username, email, password, role, firstName, lastName, education, bio, subjects, country, city, title } = req.body;
+            const data = {};
+            data.username = username;
+            data.email = email;
+            data.password = password;
+            data.role = role;
+            data.firstName = firstName;
+            data.lastName= lastName;
+            data.education = education;
+            data.bio = bio;
+            data.subjects = subjects;
+            data.country = country;
+            data.city = city;
+            data.title = title;
+
+            if(username.length < 5){
+                return res.status(400).render('sign-up', { error: "Username must Contain at Least 5 Characters", title: '', user: null, data });
+            }else if(password.length < 6){
+                return res.status(400).render('sign-up', { error: "Password must Contain at Least 6 Characters", title: '', user: null , data});
+            }else if(/\d/.test(firstName)){
+                return res.status(400).render('sign-up', { error: "First Name should not contain any number", title: '', user: null, data });
+            }
+            else if(/\d/.test(lastName)){
+                return res.status(400).render('sign-up', { error: "Last name should not contain any number", title: '', user: null, data });
+            }
+            else if(/\d/.test(country)){
+                return res.status(400).render('sign-up', { error: "Country should not contain any number", title: '', user: null, data });
+            }
+            else if(/\d/.test(city)){
+                return res.status(400).render('sign-up', { error: "City should not contain any number", title: '', user: null, data });
+            }
+
+
+
             const existingUsername = await User.findOne({ username });
             const existingRequest = await Request.findOne({ username });
 
             if (existingUsername || existingRequest) {
-                return res.status(400).render('sign-up', { error: "User With This Username Already Exixt.", title: '' });
+                return res.status(400).render('sign-up', { error: "User With This Username Already Exixt.", title: '', user: null, data });
             }
 
             const existingEmail = await User.findOne({ email });
             const exixtingEmailRequest = await Request.findOne({ email });
             if (existingEmail || exixtingEmailRequest) {
-                return res.status(400).render('sign-up', { error: "User With This Email Already Exixt.", title: '' });
+                return res.status(400).render('sign-up', { error: "User With This Email Already Exixt.", title: '' , user: null, data });
             }
 
             let profilePicture = null;
@@ -111,7 +144,7 @@ const signup = async (req, res) => {
                     }
                 });
                 await requests.save();
-                res.redirect('/login');
+                return res.status(400).render('sign-up', { error: "User Created Successfully.", title: '', user: null, data: null });
             }
 
             // Save user to database
@@ -135,7 +168,7 @@ const login = async (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.render('sign-in', { errorMessage: errors.errors[0].msg, title: 'login' });
+            return res.render('sign-in', { errorMessage: errors.errors[0].msg, title: 'login', user: null });
         }
 
         const { email, password } = req.body;
@@ -143,29 +176,29 @@ const login = async (req, res) => {
         const check = await Request.findOne({ email })
 
 
-        if (check) {
-            return res.render('sign-in', { errorMessage: 'Your Account has not been Activated Yet. Kindly Wait Untill It been Approved. ', title: 'login' })
+        if (!check) {
+            return res.render('sign-in', { errorMessage: 'Your Account has not been Activated Yet. Kindly Wait Untill It been Approved. ', title: 'login', user: null })
         }
 
         const user = await User.findOne({ email });
         if (!user) {
             // return res.status(401).json({ message: 'Invalid credentials' });
-            return res.render('sign-in', { errorMessage: "Invalid Crediantials ", title: 'login' });
+            return res.render('sign-in', { errorMessage: "Invalid Crediantials ", title: 'login' , user: null});
         }
 
         if (user.isActive === null) {
-            return res.render('sign-in', { errorMessage: "Invalid Crediantials ", title: 'login' });
+            return res.render('sign-in', { errorMessage: "Invalid Crediantials ", title: 'login', user: null });
         }
 
         if (!user.isActive) {
-            return res.render('sign-in', { errorMessage: 'Your Account has been Deactivated. Kindly Contact Us through Contact us form for more Information.', title: 'login' })
+            return res.render('sign-in', { errorMessage: 'Your Account has been Deactivated. Kindly Contact Us through Contact us form for more Information.', title: 'login' , user: null})
         }
 
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return res.render('sign-in', { errorMessage: 'Invalid username or password', title: 'login' });
+            return res.render('sign-in', { errorMessage: 'Invalid username or password', title: 'login', user: null });
         }
         
         const token = jwt.sign({ userId: user._id, email: user.email, role: user.role, profile: user.profile, username: user.username }, 'your-secret-key', { expiresIn: '12000hr' });
